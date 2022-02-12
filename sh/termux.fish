@@ -8,10 +8,10 @@ function main
             copy_config
             write_config
         case u
-            set_uz_repo
+            set_cfg_repo
         case '*'
             install_pkg
-            set_uz_repo
+            set_cfg_repo
             copy_config
             write_config
             termux-reload-settings
@@ -36,13 +36,12 @@ function install_pkg
 end
 
 # uz 设定
-function set_uz_repo
-    set -g uz_dir $HOME/storage/shared/a/uz
+function set_cfg_repo
+    set -g cfg_dir $HOME/dotfiles
 
-    git clone --depth 1 https://gitlab.com/glek/uz.git $uz_dir
-    ln -s $uz_dir $HOME
+    git clone --depth 1 https://gitlab.com/glek/dotfiles.git $cfg_dir
 
-    cd $uz_dir
+    cd $cfg_dir
     git config credential.helper store
     git config --global user.email 'rraayy246@gmail.com'
     git config --global user.name 'ray'
@@ -52,8 +51,6 @@ end
 
 # 复制设定
 function copy_config
-    set cfg_dir $uz_dir/cfg
-
     # fish 设置环境变量
     fish $cfg_dir/env.fish
     # 链接配置文件
