@@ -632,6 +632,9 @@ function set_ssh
 end
 
 function set_snapper
+	set script_name transactional-update
+	set script_url https://gitlab.com/glek/scripts/raw/main/sh/transactional-update
+
     # 防止快照被索引
     sed -i '/PRUNENAMES/s/.git/& .snapshots/' /etc/updatedb.conf
 
@@ -647,8 +650,8 @@ function set_snapper
   <description>first root filesystem</description>
 </snapshot>' > /.snapshots/1/info.xml
 
-    rsync $cfg_dir/transactional-update /bin
-    chmod +x /bin/transactional-update
+	curl -fLo /bin/$script_name $script_url
+    chmod +x /bin/$script_name
 end
 
 function set_swap
