@@ -622,6 +622,8 @@ function set_cron
 end
 
 function set_nvim
+	do_as_user git clone --depth=1 https://gitlab.com/glek/dotnvim.git ~/.config/nvim
+
 	do_as_user nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
 	mkdir -p /root/.local/share

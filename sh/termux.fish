@@ -59,6 +59,8 @@ end
 
 # 写入设定
 function write_config
+	set_nvim
+
     # 设 fish 为默认 shell
     chsh -s fish
 
@@ -67,6 +69,12 @@ function write_config
 
     # 下载 Ubuntu 字体
     curl -fLo $HOME/.termux/font.ttf --create-dirs https://github.com/powerline/fonts/raw/master/UbuntuMono/Ubuntu%20Mono%20derivative%20Powerline.ttf
+end
+
+function set_nvim
+	git clone --depth=1 https://gitlab.com/glek/dotnvim.git ~/.config/nvim
+
+	nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 end
 
 main $argv
