@@ -137,7 +137,7 @@ cdhsmcq 彩虹猫
 
 ### Arch 个人配置 ###
 
-请先[安装 arch](scr/arch.md)
+请先[安装 arch](arch.md)
 
 ```shell
 bash -c "$(curl -fsSL https://gitlab.com/glek/uz/raw/main/scr/arch.sh)"
@@ -146,7 +146,7 @@ bash -c "$(curl -fsSL https://gitlab.com/glek/uz/raw/main/scr/arch.sh)"
 
 ### Arch 服务器配置 ###
 
-请先[安装 arch](scr/archv.md)
+请先[安装 arch](archv.md)
 
 ```shell
 bash -c "$(curl -fsSL https://gitlab.com/glek/uz/raw/main/scr/arch.sh)"
