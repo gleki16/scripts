@@ -112,7 +112,7 @@ end
 
 function update_bin
     set script_name transactional-update
-    set script_url https://gitlab.com/glek/scripts/raw/main/sh/transactional-update
+    set script_url https://gitlab.com/glek/scripts/raw/main/sh/transactional-update.sh
     set snapshot_list (ls /.snapshots)
 
     curl -fLo /tmp/$script_name $script_url
