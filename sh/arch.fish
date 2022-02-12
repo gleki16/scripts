@@ -462,7 +462,7 @@ function install_pkg
     set sync_pkg       chrony rsync
     set search_pkg     ctags fzf mlocate tree highlight
     set new_search_pkg fd ripgrep bat tldr exa
-    set system_pkg     fcron htop man pacman-contrib pkgstats
+    set system_pkg     fcron btop man pacman-contrib pkgstats
     set maintain_pkg   arch-install-scripts dosfstools parted
     set security_pkg   dnscrypt-proxy gocryptfs nftables
     set depend_pkg     lua nodejs perl-file-mimeinfo qrencode yarn zsh
