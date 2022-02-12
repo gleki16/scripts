@@ -588,9 +588,9 @@ function write_config
     sed -i '/home\|root/s/bash/fish/' /etc/passwd
 
     no_gui_set  /root
-    no_vim_plug /root
 
     set_cron
+	set_nvim
     set_ssh
     set_snapper
     set_swap
@@ -611,12 +611,6 @@ function no_gui_set
     echo -e 'if status is-interactive\n\tstarship init fish | source\nend' > $home_dir/.config/fish/config.fish
 end
 
-function no_vim_plug
-    set home_dir $argv[1]
-
-    sed -i '/vim-plug/,$ s/^/"/' $home_dir/.config/nvim/init.vim
-end
-
 function set_cron
     if test "$use_gui" = 1
         sed '/and reboot/s/^/#/' $cfg_dir/cron > /tmp/cron
@@ -625,6 +619,14 @@ function set_cron
     else
         fcrontab $cfg_dir/cron
     end
+end
+
+function set_nvim
+	do_as_user nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+
+	mkdir -p /root/.local/share
+	rsync -r $user_home/.config/nvim /root/.config
+	rsync -r $user_home/.local/share/nvim /root/.local/share
 end
 
 function set_ssh
