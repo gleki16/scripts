@@ -32,7 +32,7 @@ end
 
 # 安装软件
 function install_pkg
-    pkg install -y bat curl fish git lf lua54 man neovim nodejs openssh rsync starship tree wget yarn zsh
+    pkg install -y bat clang curl fish git lf lua54 man neovim nodejs openssh rsync starship tree wget yarn zsh
 end
 
 # uz 设定
