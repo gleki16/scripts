@@ -637,7 +637,7 @@ end
 
 function set_snapper
 	set script_name transactional-update
-	set script_url https://gitlab.com/glek/scripts/raw/main/sh/transactional-update
+	set script_url https://gitlab.com/glek/scripts/raw/main/sh/transactional-update.sh
 
     # 防止快照被索引
     sed -i '/PRUNENAMES/s/.git/& .snapshots/' /etc/updatedb.conf
