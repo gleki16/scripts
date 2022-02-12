@@ -529,7 +529,7 @@ function copy_config
     set user_mkdir gz xz
 
     do_as_user mkdir -p $user_home/$user_mkdir
-    set_uz_repo
+    set_cfg_repo
 
     fish $cfg_dir/env.fish
     do_as_user fish $cfg_dir/env.fish
@@ -552,17 +552,15 @@ function do_as_user
     cd
 end
 
-function set_uz_repo
+function set_cfg_repo
 
     # uz 是存放我所有设定的仓库
 
-    set -g uz_dir $user_home/a/uz
-    set -g cfg_dir $uz_dir/cfg
+    set -g cfg_dir $user_home/dotfiles
 
-    do_as_user git clone --depth 1 https://gitlab.com/glek/uz.git $uz_dir
-    do_as_user ln -sf $uz_dir $user_home
+    do_as_user git clone --depth 1 https://gitlab.com/glek/dotfiles.git $cfg_dir
 
-    cd $uz_dir
+    cd $cfg_dir
     git config credential.helper store
     do_as_user git config --global user.email 'rraayy246@gmail.com'
     do_as_user git config --global user.name 'ray'
