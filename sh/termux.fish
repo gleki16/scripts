@@ -74,7 +74,7 @@ end
 function set_nvim
 	git clone --depth=1 https://gitlab.com/glek/dotnvim.git ~/.config/nvim
 
-	nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+	#nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 end
 
 main $argv

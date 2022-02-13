@@ -624,11 +624,11 @@ end
 function set_nvim
 	do_as_user git clone --depth=1 https://gitlab.com/glek/dotnvim.git ~/.config/nvim
 
-	do_as_user nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+	#do_as_user nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
-	mkdir -p /root/.local/share
-	rsync -r $user_home/.config/nvim /root/.config
-	rsync -r $user_home/.local/share/nvim /root/.local/share
+	#mkdir -p /root/.local/share
+	#rsync -r $user_home/.config/nvim /root/.config
+	#rsync -r $user_home/.local/share/nvim /root/.local/share
 end
 
 function set_ssh
