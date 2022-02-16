@@ -6,15 +6,15 @@ main() {
 	parse_arguments "$@"
 	check_root_permission
 
-	[ "$do_grub_install" -eq 1 ] && grub_install && exit 0
-	[ "$do_grub_mkconfig" -eq 1 ] && grub_mkconfig && exit 0
+	[ "$do_grub_install" = 1 ] && grub_install && exit 0
+	[ "$do_grub_mkconfig" = 1 ] && grub_mkconfig && exit 0
 
-	[ "$do_etc_rw" -eq 1 ] && etc_rw && exit 0
+	[ "$do_etc_rw" = 1 ] && etc_rw && exit 0
 
-	[ "$do_rollback" -eq 1 ] && rollback && exit 0
+	[ "$do_rollback" = 1 ] && rollback && exit 0
 
-	[ "$do_set_root_rw" -eq 1 ] && set_root_rw && exit 0
-	[ "$do_set_root_ro" -eq 1 ] && set_root_ro && exit 0
+	[ "$do_set_root_rw" = 1 ] && set_root_rw && exit 0
+	[ "$do_set_root_ro" = 1 ] && set_root_ro && exit 0
 
 	[ "$do_update_bin" = 1 ] && update_bin
 
