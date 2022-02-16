@@ -1,255 +1,247 @@
-#!/usr/bin/env fish
+#!/usr/bin/env bash
+set -eo pipefail
 
-function main
-    set_echo_color
-    analysis_argu $argv
-    check_root_permission
+main() {
+	color
+	parse_arguments "$@"
+	check_root_permission
 
-    if test "$do_in_chroot_proc" = 1
-        in_chroot_proc
-        exit 0
-    end
+	[ "$do_grub_install" -eq 1 ] && grub_install && exit 0
+	[ "$do_grub_mkconfig" -eq 1 ] && grub_mkconfig && exit 0
 
-    if test "$do_update_bin" = 1
-        update_bin
-        exit 0
-    end
+	[ "$do_etc_rw" -eq 1 ] && etc_rw && exit 0
 
-    if test "$do_change_etc" = 1
-        change_etc
-        exit 0
-    end
+	[ "$do_rollback" -eq 1 ] && rollback && exit 0
 
-    if test "$do_rollback_system" = 1
-        rollback_system
-        exit 0
-    end
+	[ "$do_set_root_rw" -eq 1 ] && set_root_rw && exit 0
+	[ "$do_set_root_ro" -eq 1 ] && set_root_ro && exit 0
 
-    if test "$do_open_shell" = 1
-        open_shell
-        exit 0
-    end
+	[ "$do_update_bin" = 1 ] && update_bin
 
-    if test "$do_update_system" = 1
-        update_system
-        exit 0
-    end
-end
+	[ "$do_update_etc" = 1 ] ||
+		[ "$do_update_system" = 1 ] ||
+		[ "$do_run_shell" = 1 ] && create_snapshot
+}
 
-function set_echo_color
-    set -g r '\033[1;31m' # 红
-    set -g g '\033[1;32m' # 绿
-    set -g y '\033[1;33m' # 黄
-    set -g b '\033[1;36m' # 蓝
-    set -g w '\033[1;37m' # 白
-    set -g h '\033[0m'    # 后缀
-end
+color() {
+	g="\033[1;32m" # 绿
+	r="\033[1;31m" # 红
+	y="\033[1;33m" # 黄
+	b="\033[1;36m" # 蓝
+	w="\033[1;37m" # 白
+	h="\033[0m"    # 后缀
+}
 
-function analysis_argu
-    set argu_list $argv
+parse_arguments() {
+	while [ "$#" -gt 0 ]; do
+		case "$1" in
+			bi | bin)
+				do_update_bin=1
+				;;
+			up | dup)
+				do_update_system=1
+				;;
+			et | etc)
+				do_update_etc=1
+				;;
+			rb | rollback)
+				do_rollback=1
+				shift
+				snapshot_id="$1"
+				;;
+			sh | shell)
+				do_run_shell=1
+				;;
+			rw)
+				do_set_root_rw=1
+				;;
+			ro)
+				do_set_root_ro=1
+				;;
+			--etc-rw)
+				do_etc_rw=1
+				;;
+			--grub-install)
+				do_grub_install=1
+				;;
+			--grub-mkconfig)
+				do_grub_mkconfig=1
+				;;
+			-h | --help)
+				usage
+				exit 0
+				;;
+			*)
+				usage
+				exit 1
+				;;
+		esac
+		shift
+	done
+}
 
-    while test (count $argu_list) -gt 0
-        switch $argu_list[1]
-            case -h --help
-                usage
-            case --in-chroot
-                set -g do_in_chroot_proc 1
+usage() {
+	echo "Syntax: transactional-update [options] command"
+	echo ""
+	echo "Applies package updates to a new snapshot without touching the running system."
+	echo ""
+	echo "Commands:"
+	echo "    bin       (bi)              Update this script"
+	echo "    dup       (up)              Update system to a new subvolume"
+	echo "    etc       (et)              Update /etc to a new subvolume"
+	echo "    rollback  (rb) [number]     Rollback to given subvolume"
+	echo "    rw                          Make root subvolume rw"
+	echo "    ro                          Make root subvolume ro"
+	echo "    shell     (sh)              Open rw shell in new snapshot before exiting"
+	echo ""
+	echo "Options:"
+	echo "    -h, --help                  Print this help message"
+}
 
-                set -e argu_list[1]
-                set -g grub_do $argu_list[1]
-            case -b bin
-                set -g do_update_bin 1
-            case -e etc
-                set -g do_change_etc 1
+grub_install() {
+	check_efi
 
-                set -e argu_list[1]
-                set -g change_type $argu_list[1]
-            case -r rollback
-                set -g do_rollback_system 1
+	case "$bios_type" in
+		uefi)
+			grub-install --target=x86_64-efi --efi-directory=/boot/efi
+			;;
+		bios)
+			set_root_part
 
-                set -e argu_list[1]
-                set -g snapshot_id $argu_list[1]
-            case -s shell
-                set -g do_open_shell 1
-            case -u dup
-                set -g do_update_system 1
-            case '*'
-                error 'wrong argument: '$argu_list[1]
-        end
+			if echo $root_part | grep -q 'nvme'; then
+				local grub_part=`echo $root_part | sed 's/p[0-9]$//'`
+			else
+				local grub_part=`echo $root_part | sed 's/[0-9]$//'`
+			fi
 
-        set -e argu_list[1]
-    end
-end
+			grub-install --target=i386-pc $grub_part
+			;;
+	esac
+}
 
-function usage
-    echo 'Syntax: transactional-update [option...]'
-    echo
-    echo 'Applies package updates to a new snapshot without touching the running system.'
-    echo
-    echo 'General Commands:'
-    echo '-b, bin                    Update this script'
-    echo '-e, etc                    Update /etc to a new subvolume'
-    echo '-s, shell                  Open rw shell in new snapshot before exiting'
-    echo '-e rw, etc rw              Use overlay to make /etc writable'
-    echo
-    echo 'Package Commands:'
-    echo '-u, dup                    Call (zypper dup)'
-    echo
-    echo 'Options:'
-    echo '-h, --help                 Display this help and exit'
-    exit 0
-end
+grub_mkconfig() {
+	grub_install
+	grub-mkconfig -o /boot/grub/grub.cfg
+}
 
-function in_chroot_proc
-    switch $grub_do
-        case install
-            grub_install
-        case mkconfig
-            grub_install
-            grub-mkconfig -o /boot/grub/grub.cfg
-    end
-end
+etc_rw() {
+	local upper_dir=/tmp/etc/upper
+	local work_dir=/tmp/etc/work
 
-function update_bin
-    set script_name transactional-update
-    set script_url https://gitlab.com/glek/scripts/raw/main/sh/transactional-update.sh
-    set snapshot_list (ls /.snapshots)
+	mkdir -p $upper_dir $work_dir
+	mount -t overlay overlay -o lowerdir=/etc,upperdir=${upper_dir},workdir=${work_dir} /etc
+}
 
-    curl -fLo /tmp/$script_name $script_url
+rollback() {
+	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
-    for snapshot_id in $snapshot_list
-        set snapshot_dir /.snapshots/$snapshot_id/snapshot
+	[ ! -d "$snapshot_dir" ] && error "${snapshot_id} not a snapshot"
 
-        btrfs property set $snapshot_dir ro false
-        rsync /tmp/$script_name $snapshot_dir/bin
-        btrfs property set $snapshot_dir ro true
-    end
+	set_snapshot_rw
+	mount_snapshots
+	arch-chroot $snapshot_dir "$0" --grub-install
+	set_snapshot_ro
+}
 
-    rm /tmp/$script_name
-end
+set_root_rw() {
+	set_root_part
+	set_root_snapshot
 
-function change_etc
-    switch $change_type
-        case rw
-            etc_overlay
-        case '*'
-            update_etc
-    end
-end
+	set_snapshot_rw
 
-function etc_overlay
-    set upper_dir /tmp/etc/upper
-    set work_dir  /tmp/etc/work
+	mount -o remount,rw $root_part /
+	mount --bind /usr/lib/pacman/local /var/lib/pacman/local
+}
 
-    mkdir -p $upper_dir $work_dir
-    mount -t overlay overlay -o lowerdir=/etc,upperdir=$upper_dir,workdir=$work_dir /etc
-end
+set_root_ro() {
+	set_root_snapshot
 
-function update_etc
-    create_new_snapshot 'etc update'
-    mount_snapshot
-    rsync -ah --delete --info=progress2 --inplace --no-whole-file --exclude 'resolv.conf' /etc $snapshot_dir
-    arch-chroot $snapshot_dir (status -f) --in-chroot mkconfig
-    set_snapshot_ro
-end
+	set_snapshot_ro
+}
 
-function rollback_system
-    set -g snapshot_dir /.snapshots/$snapshot_id/snapshot
+update_bin() {
+	local script_name="transactional-update"
+	local script_url="https://gitlab.com/glek/scripts/raw/main/sh/transactional-update.sh"
+	local snapshot_list=(`ls /.snapshots`)
 
-    if ! test -d $snapshot_dir
-        error $snapshot_id' not a snapshot.'
-    end
+	curl -fLo /tmp/$script_name $script_url
 
-    set_snapshot_rw
-    mount_snapshot
-    arch-chroot $snapshot_dir (status -f) --in-chroot install
-    set_snapshot_ro
-end
+	for snapshot_id in ${snapshot_list[@]}; do
+		snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
-function open_shell
-    create_new_snapshot 'open shell'
-    mount_snapshot
-    arch-chroot $snapshot_dir (status -f) --in-chroot mkconfig
-    arch-chroot $snapshot_dir fish
-    set_snapshot_ro
-end
+		set_snapshot_rw
+		rsync /tmp/$script_name $snapshot_dir/bin
+		set_snapshot_ro
+	done
 
-function update_system
-    create_new_snapshot 'update system'
-    mount_snapshot
-    arch-chroot $snapshot_dir (status -f) --in-chroot mkconfig
-    echo 'sorting mirrors ...'
-    arch-chroot $snapshot_dir reflector --latest 20 --protocol https --save /etc/pacman.d/mirrorlist --sort rate
-    arch-chroot $snapshot_dir pacman -Syu --needed --noconfirm
-    set_snapshot_ro
-end
+	rm /tmp/$script_name
+}
 
-function grub_install
-    check_efi
-    switch $bios_type
-        case uefi
-            grub-install --target=x86_64-efi --efi-directory=/boot/efi
-        case bios
-            set root_part (df | awk '$6=="/" {print $1}')
+create_snapshot() {
+	local desc=("up")
 
-            if echo $root_part | grep -q 'nvme'
-                set grub_part (echo $root_part | sed 's/p[0-9]$//')
-            else
-                set grub_part (echo $root_part | sed 's/[0-9]$//')
-            end
-            grub-install --target=i386-pc $grub_part
-    end
-end
+	[ "$do_update_etc" = 1 ] && desc+=("etc")
+	[ "$do_update_system" = 1 ] && desc+=("sys")
+	[ "$do_run_shell" = 1 ] && desc+=("sh")
 
-function check_efi
-    if test -d /sys/firmware/efi
-        set -g bios_type 'uefi'
-    else
-        set -g bios_type 'bios'
-    end
-end
+	local snapshot_id=`snapper create --print-number --cleanup-algorithm number --description ${desc[*]}`
+	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
-function create_new_snapshot
-    set description $argv[1]
-    set snapshot_id (snapper create --print-number --cleanup-algorithm number --description $description)
-    set -g snapshot_dir /.snapshots/$snapshot_id/snapshot
+	set_snapshot_rw
+	mount_snapshots
 
-    if ! echo -- "$snapshot_id" | grep -q '^[1-9][0-9]*$'
-        error 'wrong snapshot id : '$snapshot_id
-    end
+	[ "$do_update_etc" = 1 ] &&
+		rsync -ah --delete --info=progress2 --inplace --no-whole-file --exclude 'resolv.conf' /etc $snapshot_dir
 
-    set_snapshot_rw
-end
+	arch-chroot $snapshot_dir "$0" --grub-mkconfig
 
-function set_snapshot_rw
-    btrfs subvol set-default $snapshot_dir
-    btrfs property set $snapshot_dir ro false
-end
+	[ "$do_update_system" = 1 ] &&
+		echo 'sorting mirrors ...' &&
+		arch-chroot $snapshot_dir reflector --latest 20 --protocol https --save /etc/pacman.d/mirrorlist --sort rate &&
+		arch-chroot $snapshot_dir pacman -Syu --needed --noconfirm
 
-function mount_snapshot
-    set root_part (df | awk '$6=="/" {print $1}')
+	[ "$do_run_shell" = 1 ] &&
+		arch-chroot $snapshot_dir fish
 
-    mount $root_part $snapshot_dir
-    arch-chroot $snapshot_dir mount -a
-end
+	set_snapshot_ro
+}
 
-function set_snapshot_ro
-    umount -R $snapshot_dir
-    btrfs property set $snapshot_dir ro true
-end
+mount_snapshots() {
+	set_root_part
 
-function check_root_permission
-    if test $USER != 'root'
-        error 'no permission'
-    end
-end
+	mount $root_part $snapshot_dir
+	arch-chroot $snapshot_dir mount -a
+}
 
-function error
-    set wrong_reason $argv
+set_snapshot_rw() {
+	btrfs property set $snapshot_dir ro false
+}
 
-    echo -e $r'error: '$h$wrong_reason
-    exit 1
-end
+set_snapshot_ro() {
+	btrfs property set $snapshot_dir ro true
+}
 
-main $argv
+set_root_part() {
+	root_part=`df | awk '$6=="/" {print $1}'`
+}
 
+set_root_snapshot() {
+	snapshot_dir=`findmnt --output source --noheadings / | sed -e 's|.*\(/\.snapshots.*snapshot\).*|\1|g'`
+}
+
+check_efi() {
+	[ -d /sys/firmware/efi ] && bios_type="uefi" || bios_type="bios"
+}
+
+check_root_permission() {
+	[ "$USER" != "root" ] && error "no permission"
+}
+
+error() {
+	local wrong_reason="$@"
+
+	echo -e $r"error: "$h$wrong_reason
+	exit 1
+}
+
+main "$@"
