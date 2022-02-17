@@ -215,7 +215,7 @@ create_snapshot() {
 		desc+=("sh")
 	fi
 
-	local snapshot_id=`snapper create --print-number --cleanup-algorithm=number --description=${desc[*]}`
+	snapshot_id=`snapper create --print-number --cleanup-algorithm=number --description=${desc[*]}`
 	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
 	set_snapshot_rw
