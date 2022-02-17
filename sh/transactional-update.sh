@@ -171,9 +171,11 @@ rollback() {
 	fi
 
 	set_snapshot_rw
+	set_default_snapshot
 	mount_snapshots
 	arch-chroot $snapshot_dir "$0" --grub-install
 	set_snapshot_ro
+	umount_snapshots
 }
 
 set_root_rw() {
@@ -227,6 +229,7 @@ create_snapshot() {
 	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
 	set_snapshot_rw
+	set_default_snapshot
 	mount_snapshots
 
 	if [ "$do_update_etc" = 1 ]; then
@@ -246,6 +249,7 @@ create_snapshot() {
 	fi
 
 	set_snapshot_ro
+	umount_snapshots
 }
 
 mount_snapshots() {
@@ -257,11 +261,18 @@ mount_snapshots() {
 
 set_snapshot_rw() {
 	btrfs property set $snapshot_dir ro false
-	btrfs property get $snapshot_dir
+}
+
+set_default_snapshot() {
+	btrfs subvol set-default $snapshot_dir
 }
 
 set_snapshot_ro() {
 	btrfs property set $snapshot_dir ro true
+}
+
+umount_snapshots() {
+	umount -R $snapshot_dir
 }
 
 set_root_part() {
