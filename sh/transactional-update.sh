@@ -44,6 +44,10 @@ main() {
 	then
 		create_snapshot
 	fi
+
+	if [ "$do_reboot" = 1 ]; then
+		reboot
+	fi
 }
 
 color() {
@@ -81,6 +85,9 @@ parse_arguments() {
 			ro)
 				do_set_root_ro=1
 				;;
+			re | reboot)
+				do_reboot=1
+				;;
 			--etc-rw)
 				do_etc_rw=1
 				;;
@@ -112,10 +119,11 @@ usage() {
 	echo "    bin       (bi)              Update this script"
 	echo "    dup       (up)              Update system to a new subvolume"
 	echo "    etc       (et)              Update /etc to a new subvolume"
+	echo "    reboot    (re)              Reboot system when done"
 	echo "    rollback  (rb) [number]     Rollback to given subvolume"
+	echo "    shell     (sh)              Open rw shell in new snapshot before exiting"
 	echo "    rw                          Make root subvolume rw"
 	echo "    ro                          Make root subvolume ro"
-	echo "    shell     (sh)              Open rw shell in new snapshot before exiting"
 	echo ""
 	echo "Options:"
 	echo "    -h, --help                  Print this help message"
@@ -159,7 +167,7 @@ rollback() {
 	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
 	if [ ! -d "$snapshot_dir" ]; then
-		error "${snapshot_id} not a snapshot"
+		error "${snapshot_id} not a snapshot id"
 	fi
 
 	set_snapshot_rw
@@ -249,6 +257,7 @@ mount_snapshots() {
 
 set_snapshot_rw() {
 	btrfs property set $snapshot_dir ro false
+	btrfs property get $snapshot_dir
 }
 
 set_snapshot_ro() {
