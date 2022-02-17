@@ -225,9 +225,7 @@ create_snapshot() {
 		desc+=("sh")
 	fi
 
-	snapper create --cleanup-algorithm=number --description=${desc[*]}
-	local snapshot_list=(`ls /.snapshots`)
-	local snapshot_id=${snapshot_list[-1]}
+	local snapshot_id=`snapper create --print-number --cleanup-algorithm=number`
 	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
 	new_snapshot_action
