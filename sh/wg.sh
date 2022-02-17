@@ -145,14 +145,14 @@ change_mem() {
 review_config() {
 	local mem_list=$(sudo cat /etc/wireguard/wg0.conf | grep -oP '(?<=\.)\d+(?=\/)')
 
-	while true
+	while true; do
 		echo
 		echo "已存在成员："
 		echo "${mem_list[@]}"
 
 		echo "输入成员数字（查看配置）"
 		read -p "> " i
-		if [[ "$i" =~ ^[1-9][0-9]+$ ]] && [[ "${mem_list[@]}" =~ "$i" ]]
+		if [[ "$i" =~ ^[1-9][0-9]+$ ]] && [[ "${mem_list[@]}" =~ "$i" ]]; then
 			echo ""
 			echo ""
 			echo " cat << EOF | sudo tee /etc/wireguard/wg${i}.conf"
