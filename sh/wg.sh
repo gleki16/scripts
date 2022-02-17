@@ -81,6 +81,9 @@ set_wg() {
 	port=51820
 
 	rm -rf *
+	if [ -n "$(wg)" ]; then
+		sudo wg-quick down wg0
+	fi
 
 	echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/ip_forward.conf
 	sudo sysctl $(cat /etc/sysctl.d/ip_forward.conf | sed 's/ //g')
