@@ -73,6 +73,7 @@ cd_wg_dir() {
 	local wg_dir="$HOME/.wireguard"
 
 	mkdir -p ${wg_dir}
+	cd ${wg_dir}
 }
 
 set_wg() {
@@ -155,7 +156,7 @@ review_config() {
 		if [[ "$i" =~ ^[1-9][0-9]*$ ]] && [[ "${mem_list[@]}" =~ "$i" ]]; then
 			echo ""
 			echo ""
-			echo " cat << EOF | sudo tee /etc/wireguard/wg${i}.conf"
+			echo "cat << EOF | sudo tee /etc/wireguard/wg${i}.conf"
 			cat wg${i}.conf
 			echo "EOF"
 			echo ""
