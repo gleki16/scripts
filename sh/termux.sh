@@ -73,6 +73,8 @@ install_proc() {
 	install_pkg
 	copy_config
 	write_config
+
+	echo "please reboot"
 }
 
 termux_set() {
