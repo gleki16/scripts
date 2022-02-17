@@ -80,7 +80,7 @@ set_wg() {
 	set_ip
 	port=51820
 
-	rm -rf .
+	rm -rf *
 
 	echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/ip_forward.conf
 	sudo sysctl $(cat /etc/sysctl.d/ip_forward.conf | sed 's/ //g')
