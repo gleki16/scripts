@@ -109,6 +109,8 @@ parse_arguments() {
 }
 
 usage() {
+	local exit_code="$1"
+
 	echo "Syntax: transactional-update [options] command"
 	echo ""
 	echo "Applies package updates to a new snapshot without touching the running system."
@@ -126,7 +128,7 @@ usage() {
 	echo "Options:"
 	echo "    -h, --help                  Print this help message"
 
-	exit $1
+	exit ${exit_code}
 }
 
 grub_install() {
@@ -139,13 +141,13 @@ grub_install() {
 		bios)
 			set_root_part
 
-			if echo $root_part | grep -q 'nvme'; then
-				local grub_part=`echo $root_part | sed 's/p[0-9]$//'`
+			if echo ${root_part} | grep -q 'nvme'; then
+				local grub_part=`echo ${root_part} | sed 's/p[0-9]$//'`
 			else
-				local grub_part=`echo $root_part | sed 's/[0-9]$//'`
+				local grub_part=`echo ${root_part} | sed 's/[0-9]$//'`
 			fi
 
-			grub-install --target=i386-pc $grub_part
+			grub-install --target=i386-pc ${grub_part}
 			;;
 	esac
 }
@@ -156,15 +158,15 @@ grub_mkconfig() {
 }
 
 etc_rw() {
-	local upper_dir=/tmp/etc/upper
-	local work_dir=/tmp/etc/work
+	local upper_dir="/tmp/etc/upper"
+	local work_dir="/tmp/etc/work"
 
-	mkdir -p $upper_dir $work_dir
+	mkdir -p ${upper_dir} ${work_dir}
 	mount -t overlay overlay -o lowerdir=/etc,upperdir=${upper_dir},workdir=${work_dir} /etc
 }
 
 rollback() {
-	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
+	snapshot_dir="/.snapshots/${snapshot_id}/snapshot"
 
 	if [ ! -d "$snapshot_dir" ]; then
 		error "${snapshot_id} not a snapshot id"
@@ -173,7 +175,7 @@ rollback() {
 	set_snapshot_rw
 	set_default_snapshot
 	mount_snapshots
-	arch-chroot $snapshot_dir "$0" --grub-install
+	arch-chroot ${snapshot_dir} "$0" --grub-install
 	set_snapshot_ro
 	umount_snapshots
 }
@@ -184,7 +186,7 @@ set_root_rw() {
 
 	set_snapshot_rw
 
-	mount -o remount,rw $root_part /
+	mount -o remount,rw ${root_part} /
 	mount --bind /usr/lib/pacman/local /var/lib/pacman/local
 }
 
@@ -199,17 +201,17 @@ update_bin() {
 	local script_url="https://gitlab.com/glek/scripts/raw/main/sh/transactional-update.sh"
 	local snapshot_list=(`ls /.snapshots`)
 
-	curl -fLo /tmp/$script_name $script_url
+	curl -fLo /tmp/${script_name} ${script_url}
 
 	for snapshot_id in ${snapshot_list[@]}; do
-		snapshot_dir="/.snapshots/$snapshot_id/snapshot"
+		snapshot_dir="/.snapshots/${snapshot_id}/snapshot"
 
 		set_snapshot_rw
-		rsync /tmp/$script_name $snapshot_dir/bin
+		rsync /tmp/${script_name} ${snapshot_dir}/bin
 		set_snapshot_ro
 	done
 
-	rm /tmp/$script_name
+	rm /tmp/${script_name}
 }
 
 create_snapshot() {
@@ -226,7 +228,7 @@ create_snapshot() {
 	fi
 
 	local snapshot_id=`snapper create --print-number --cleanup-algorithm=number --description="${desc[*]}"`
-	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
+	snapshot_dir="/.snapshots/${snapshot_id}/snapshot"
 
 	new_snapshot_action
 }
@@ -237,19 +239,19 @@ new_snapshot_action() {
 	mount_snapshots
 
 	if [ "$do_update_etc" = 1 ]; then
-		rsync -ah --delete --info=progress2 --inplace --no-whole-file --exclude=resolv.conf /etc $snapshot_dir
+		rsync -ah --delete --info=progress2 --inplace --no-whole-file --exclude=resolv.conf /etc ${snapshot_dir}
 	fi
 
-	arch-chroot $snapshot_dir "$0" --grub-mkconfig
+	arch-chroot ${snapshot_dir} "$0" --grub-mkconfig
 
 	if [ "$do_update_system" = 1 ]; then
 		echo 'sorting mirrors ...'
-		arch-chroot $snapshot_dir reflector --latest 20 --protocol https --save /etc/pacman.d/mirrorlist --sort rate
-		arch-chroot $snapshot_dir pacman -Syu --needed --noconfirm
+		arch-chroot ${snapshot_dir} reflector --latest 20 --protocol https --save /etc/pacman.d/mirrorlist --sort rate
+		arch-chroot ${snapshot_dir} pacman -Syu --needed --noconfirm
 	fi
 
 	if [ "$do_run_shell" = 1 ]; then
-		arch-chroot $snapshot_dir fish
+		arch-chroot ${snapshot_dir} fish
 	fi
 
 	set_snapshot_ro
@@ -259,24 +261,24 @@ new_snapshot_action() {
 mount_snapshots() {
 	set_root_part
 
-	mount $root_part $snapshot_dir
-	arch-chroot $snapshot_dir mount -a
+	mount ${root_part} ${snapshot_dir}
+	arch-chroot ${snapshot_dir} mount -a
 }
 
 set_snapshot_rw() {
-	btrfs property set $snapshot_dir ro false
+	btrfs property set ${snapshot_dir} ro false
 }
 
 set_default_snapshot() {
-	btrfs subvol set-default $snapshot_dir
+	btrfs subvol set-default ${snapshot_dir}
 }
 
 set_snapshot_ro() {
-	btrfs property set $snapshot_dir ro true
+	btrfs property set ${snapshot_dir} ro true
 }
 
 umount_snapshots() {
-	umount -R $snapshot_dir
+	umount -R ${snapshot_dir}
 }
 
 set_root_part() {
@@ -302,9 +304,9 @@ check_root_permission() {
 }
 
 error() {
-	local wrong_reason="$@"
+	local wrong_reason="$*"
 
-	echo -e $r"error: "$h$wrong_reason
+	echo -e "${r}error: ${h}${wrong_reason}"
 	exit 1
 }
 
