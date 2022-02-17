@@ -43,6 +43,7 @@ main() {
 		[ "$do_run_shell" = 1 ]
 	then
 		create_snapshot
+		new_snapshot_action
 	fi
 
 	if [ "$do_reboot" = 1 ]; then
@@ -142,9 +143,9 @@ grub_install() {
 			set_root_part
 
 			if echo ${root_part} | grep -q 'nvme'; then
-				local grub_part=`echo ${root_part} | sed 's/p[0-9]$//'`
+				local grub_part=$(echo ${root_part} | sed 's/p[0-9]$//')
 			else
-				local grub_part=`echo ${root_part} | sed 's/[0-9]$//'`
+				local grub_part=$(echo ${root_part} | sed 's/[0-9]$//')
 			fi
 
 			grub-install --target=i386-pc ${grub_part}
@@ -199,7 +200,7 @@ set_root_ro() {
 update_bin() {
 	local script_name="transactional-update"
 	local script_url="https://gitlab.com/glek/scripts/raw/main/sh/transactional-update.sh"
-	local snapshot_list=(`ls /.snapshots`)
+	local snapshot_list=($(ls /.snapshots))
 
 	curl -fLo /tmp/${script_name} ${script_url}
 
@@ -227,10 +228,8 @@ create_snapshot() {
 		desc+=("sh")
 	fi
 
-	local snapshot_id=`snapper create --print-number --cleanup-algorithm=number --description="${desc[@]}"`
+	local snapshot_id=$(snapper create --print-number --cleanup-algorithm=number --description="${desc[@]}")
 	snapshot_dir="/.snapshots/${snapshot_id}/snapshot"
-
-	new_snapshot_action
 }
 
 new_snapshot_action() {
@@ -282,11 +281,11 @@ umount_snapshots() {
 }
 
 set_root_part() {
-	root_part=`df | awk '$6=="/" {print $1}'`
+	root_part=$(df | awk '$6=="/" {print $1}')
 }
 
 set_root_snapshot() {
-	snapshot_dir=`findmnt --output source --noheadings / | sed -e 's|.*\(/\.snapshots.*snapshot\).*|\1|g'`
+	snapshot_dir=$(findmnt --output source --noheadings / | sed -e 's|.*\(/\.snapshots.*snapshot\).*|\1|g')
 }
 
 check_efi() {
