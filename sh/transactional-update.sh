@@ -215,14 +215,14 @@ create_snapshot() {
 		desc+=("sh")
 	fi
 
-	local snapshot_id=`snapper create --print-number --cleanup-algorithm number --description ${desc[*]}`
+	local snapshot_id=`snapper create --print-number --cleanup-algorithm=number --description=${desc[*]}`
 	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
 	set_snapshot_rw
 	mount_snapshots
 
 	if [ "$do_update_etc" = 1 ]; then
-		rsync -ah --delete --info=progress2 --inplace --no-whole-file --exclude 'resolv.conf' /etc $snapshot_dir
+		rsync -ah --delete --info=progress2 --inplace --no-whole-file --exclude=resolv.conf /etc $snapshot_dir
 	fi
 
 	arch-chroot $snapshot_dir "$0" --grub-mkconfig
