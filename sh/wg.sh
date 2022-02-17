@@ -120,11 +120,8 @@ change_mem() {
 	port=$(sudo cat /etc/wireguard/wg0.conf | grep -oP '(?<=ListenPort = )\d+')
 
 	while true; do
-		local mem_list=($(sudo cat /etc/wireguard/wg0.conf | grep -oP '(?<=\.)\d+(?=\/)'))
-
-		echo ""
-		echo "已存在成员："
-		echo "${mem_list[@]}"
+		set_mem_list
+		echo_mem_list
 
 		echo "输入成员数字（存在则删除，不存在则创建）"
 		read -p "> " i
@@ -147,12 +144,10 @@ change_mem() {
 }
 
 review_config() {
-	local mem_list=$(sudo cat /etc/wireguard/wg0.conf | grep -oP '(?<=\.)\d+(?=\/)')
+	set_mem_list
 
 	while true; do
-		echo
-		echo "已存在成员："
-		echo "${mem_list[@]}"
+		echo_mem_list
 
 		echo "输入成员数字（查看配置）"
 		read -p "> " i
@@ -190,6 +185,16 @@ PublicKey = $(cat pub1)
 Endpoint = ${ip}:${port}
 AllowedIPs = 0.0.0.0/0
 EOF
+}
+
+set_mem_list() {
+	mem_list=$(sudo cat /etc/wireguard/wg0.conf | grep -oP '(?<=\.)\d+(?=\/)')
+}
+
+echo_mem_list() {
+	echo ""
+	echo "已存在成员："
+	echo "${mem_list[@]}"
 }
 
 error() {
