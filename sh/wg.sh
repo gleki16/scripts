@@ -135,7 +135,7 @@ change_mem() {
 				chmod 600 pri${i}
 				sudo wg set wg0 peer $(cat pub${i}) allowed-ips 10.10.10.${i}/32
 				sudo wg-quick save wg0
-				generate_member_config ${i}
+				generate_mem_config ${i}
 			fi
 		else
 			break
