@@ -71,7 +71,6 @@ install_proc() {
 	install_pkg
 	copy_config
 	write_config
-	set_nvim
 }
 
 termux_set() {
