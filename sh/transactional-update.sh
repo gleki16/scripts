@@ -98,12 +98,10 @@ parse_arguments() {
 				do_grub_mkconfig=1
 				;;
 			-h | --help)
-				usage
-				exit 0
+				usage 0
 				;;
 			*)
-				usage
-				exit 1
+				usage 1
 				;;
 		esac
 		shift
@@ -127,6 +125,8 @@ usage() {
 	echo ""
 	echo "Options:"
 	echo "    -h, --help                  Print this help message"
+
+	exit $1
 }
 
 grub_install() {
