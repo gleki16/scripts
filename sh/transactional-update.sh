@@ -117,7 +117,7 @@ usage() {
 	echo "    bin       (bi)              Update this script"
 	echo "    dup       (up)              Update system to a new subvolume"
 	echo "    etc       (et)              Update /etc to a new subvolume"
-	echo "    reboot    (re)              Reboot system when done"
+	echo "    reboot    (re)              Reboot after the action is completed"
 	echo "    rollback  (rb) [number]     Rollback to given subvolume"
 	echo "    shell     (sh)              Open rw shell in new snapshot before exiting"
 	echo "    rw                          Make root subvolume rw"
