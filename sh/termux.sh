@@ -28,11 +28,12 @@ color() {
 }
 
 parse_arguments() {
+	if [ "$#" -eq 0 ]; then
+		do_install_proc=1
+	fi
+
 	while [ "$#" -gt 0 ]; do
 		case "$1" in
-			'')
-				do_install_proc=1
-				;;
 			cf | config)
 				do_copy_config=1
 				;;
