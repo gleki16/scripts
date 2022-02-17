@@ -299,7 +299,7 @@ check_efi() {
 
 check_root_permission() {
 	if [ "$USER" != "root" ]; then
-		error no permission
+		error "no permission"
 	fi
 }
 
