@@ -158,8 +158,8 @@ review_config() {
 			echo " cat << EOF | sudo tee /etc/wireguard/wg${i}.conf"
 			cat wg${i}.conf
 			echo "EOF"
-			echo
-			echo
+			echo ""
+			echo ""
 			qrencode -t ansiutf8 < wg${i}.conf
 			echo
 		else
