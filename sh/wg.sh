@@ -84,8 +84,8 @@ set_wg() {
 	echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/ip_forward.conf
 	sudo sysctl $(cat /etc/sysctl.d/ip_forward.conf | sed 's/ //g')
 
-	wg genkey | tee pri1 | wg pubkey >pub1
-	wg genkey | tee pri2 | wg pubkey >pub2
+	wg genkey | tee pri1 | wg pubkey > pub1
+	wg genkey | tee pri2 | wg pubkey > pub2
 
 	chmod 600 pri1
 	chmod 600 pri2
@@ -130,7 +130,7 @@ change_mem() {
 				sudo wg-quick save wg0
 				rm wg${i}.conf pub${i} pri${i}
 			else
-				wg genkey | tee pri${i} | wg pubkey >pub${i}
+				wg genkey | tee pri${i} | wg pubkey > pub${i}
 				chmod 600 pri${i}
 				sudo wg set wg0 peer $(cat pub${i}) allowed-ips 10.10.10.${i}/32
 				sudo wg-quick save wg0
@@ -152,7 +152,7 @@ review_config() {
 
 		echo "输入成员数字（查看配置）"
 		read -p "> " i
-		if [[ "${mem_list[@]}" =~ "$i" ]]
+		if [[ "$i" =~ ^[1-9][0-9]+$ ]] && [[ "${mem_list[@]}" =~ "$i" ]]
 			echo ""
 			echo ""
 			echo " cat << EOF | sudo tee /etc/wireguard/wg${i}.conf"
@@ -160,7 +160,7 @@ review_config() {
 			echo "EOF"
 			echo
 			echo
-			qrencode -t ansiutf8 <wg${i}.conf
+			qrencode -t ansiutf8 < wg${i}.conf
 			echo
 		else
 			break
