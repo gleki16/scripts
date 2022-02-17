@@ -124,7 +124,7 @@ change_mem() {
 
 		echo "输入成员数字（存在则删除，不存在则创建）"
 		read -p "> " i
-		if [[ "$i" =~ ^[1-9][0-9]+$ ]] && [ ${i} -ge 2 -a ${i} -le 254 ]; then
+		if [[ "$i" =~ ^[1-9][0-9]*$ ]] && [ ${i} -ge 2 -a ${i} -le 254 ]; then
 			if [[ "${mem_list[@]}" =~ "$i" ]]; then
 				sudo wg set wg0 peer $(cat pub${i}) remove
 				sudo wg-quick save wg0
@@ -152,7 +152,7 @@ review_config() {
 
 		echo "输入成员数字（查看配置）"
 		read -p "> " i
-		if [[ "$i" =~ ^[1-9][0-9]+$ ]] && [[ "${mem_list[@]}" =~ "$i" ]]; then
+		if [[ "$i" =~ ^[1-9][0-9]*$ ]] && [[ "${mem_list[@]}" =~ "$i" ]]; then
 			echo ""
 			echo ""
 			echo " cat << EOF | sudo tee /etc/wireguard/wg${i}.conf"
