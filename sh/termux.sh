@@ -107,10 +107,10 @@ clone_cfg_repo() {
 	fi
 
 	cd ${cfg_dir}
-	git config credential.helper store
 	git config --global user.email 'rraayy246@gmail.com'
 	git config --global user.name 'ray'
 	git config --global pull.rebase false
+	git config --global credential.helper store
 	cd
 }
 
