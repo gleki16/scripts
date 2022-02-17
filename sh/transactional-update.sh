@@ -1,26 +1,49 @@
 #!/usr/bin/env bash
-set -e
+set -eo pipefail
 
 main() {
 	color
 	parse_arguments "$@"
 	check_root_permission
 
-	[ "$do_grub_install" = 1 ] && grub_install && exit 0
-	[ "$do_grub_mkconfig" = 1 ] && grub_mkconfig && exit 0
+	if [ "$do_grub_install" = 1 ]; then
+		grub_install
+		exit 0
+	fi
+	if [ "$do_grub_mkconfig" = 1 ]; then
+		grub_mkconfig
+		exit 0
+	fi
 
-	[ "$do_etc_rw" = 1 ] && etc_rw && exit 0
+	if [ "$do_etc_rw" = 1 ]; then
+		etc_rw
+		exit 0
+	fi
 
-	[ "$do_rollback" = 1 ] && rollback && exit 0
+	if [ "$do_rollback" = 1 ]; then
+		rollback
+		exit 0
+	fi
 
-	[ "$do_set_root_rw" = 1 ] && set_root_rw && exit 0
-	[ "$do_set_root_ro" = 1 ] && set_root_ro && exit 0
+	if [ "$do_set_root_rw" = 1 ]; then
+		set_root_rw
+		exit 0
+	fi
+	if [ "$do_set_root_ro" = 1 ]; then
+		set_root_ro
+		exit 0
+	fi
 
-	[ "$do_update_bin" = 1 ] && update_bin
+	if [ "$do_update_bin" = 1 ]; then
+		update_bin
+	fi
 
-	[ "$do_update_etc" = 1 ] ||
+	if [ "$do_update_etc" = 1 ] ||
 		[ "$do_update_system" = 1 ] ||
-		[ "$do_run_shell" = 1 ] && create_snapshot
+		[ "$do_run_shell" = 1 ]
+	then
+		create_snapshot
+	fi
 }
 
 color() {
@@ -135,7 +158,9 @@ etc_rw() {
 rollback() {
 	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
-	[ ! -d "$snapshot_dir" ] && error "${snapshot_id} not a snapshot"
+	if [ ! -d "$snapshot_dir" ]; then
+		error "${snapshot_id} not a snapshot"
+	fi
 
 	set_snapshot_rw
 	mount_snapshots
@@ -180,9 +205,15 @@ update_bin() {
 create_snapshot() {
 	local desc=("up")
 
-	[ "$do_update_etc" = 1 ] && desc+=("etc")
-	[ "$do_update_system" = 1 ] && desc+=("sys")
-	[ "$do_run_shell" = 1 ] && desc+=("sh")
+	if [ "$do_update_etc" = 1 ]; then
+		desc+=("etc")
+	fi
+	if [ "$do_update_system" = 1 ]; then
+		desc+=("sys")
+	fi
+	if [ "$do_run_shell" = 1 ]; then
+		desc+=("sh")
+	fi
 
 	local snapshot_id=`snapper create --print-number --cleanup-algorithm number --description ${desc[*]}`
 	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
@@ -190,18 +221,21 @@ create_snapshot() {
 	set_snapshot_rw
 	mount_snapshots
 
-	[ "$do_update_etc" = 1 ] &&
+	if [ "$do_update_etc" = 1 ]; then
 		rsync -ah --delete --info=progress2 --inplace --no-whole-file --exclude 'resolv.conf' /etc $snapshot_dir
+	fi
 
 	arch-chroot $snapshot_dir "$0" --grub-mkconfig
 
-	[ "$do_update_system" = 1 ] &&
-		echo 'sorting mirrors ...' &&
-		arch-chroot $snapshot_dir reflector --latest 20 --protocol https --save /etc/pacman.d/mirrorlist --sort rate &&
+	if [ "$do_update_system" = 1 ]; then
+		echo 'sorting mirrors ...'
+		arch-chroot $snapshot_dir reflector --latest 20 --protocol https --save /etc/pacman.d/mirrorlist --sort rate
 		arch-chroot $snapshot_dir pacman -Syu --needed --noconfirm
+	fi
 
-	[ "$do_run_shell" = 1 ] &&
+	if [ "$do_run_shell" = 1 ]; then
 		arch-chroot $snapshot_dir fish
+	fi
 
 	set_snapshot_ro
 }
@@ -230,11 +264,17 @@ set_root_snapshot() {
 }
 
 check_efi() {
-	[ -d /sys/firmware/efi ] && bios_type="uefi" || bios_type="bios"
+	if [ -d /sys/firmware/efi ]; then
+		bios_type="uefi"
+	else
+		bios_type="bios"
+	fi
 }
 
 check_root_permission() {
-	[ "$USER" != "root" ] && error "no permission"
+	if [ "$USER" != "root" ]; then
+		error "no permission"
+	fi
 }
 
 error() {
