@@ -65,13 +65,13 @@ parse_arguments() {
 			bi | bin)
 				do_update_bin=1
 				;;
-			up | dup)
-				do_update_system=1
-				;;
 			et | etc)
 				do_update_etc=1
 				;;
-			rb | rollback)
+			re | reboot)
+				do_reboot=1
+				;;
+			ro | rollback)
 				do_rollback=1
 				shift
 				snapshot_id="$1"
@@ -79,14 +79,14 @@ parse_arguments() {
 			sh | shell)
 				do_run_shell=1
 				;;
-			rw)
+			up | dup)
+				do_update_system=1
+				;;
+			root-rw)
 				do_set_root_rw=1
 				;;
-			ro)
+			root-ro)
 				do_set_root_ro=1
-				;;
-			re | reboot)
-				do_reboot=1
 				;;
 			--etc-rw)
 				do_etc_rw=1
@@ -120,10 +120,10 @@ usage() {
 	echo "    dup       (up)              Update system to a new subvolume"
 	echo "    etc       (et)              Update /etc to a new subvolume"
 	echo "    reboot    (re)              Reboot after the action is completed"
-	echo "    rollback  (rb) [number]     Rollback to given subvolume"
+	echo "    rollback  (ro) [number]     Rollback to given subvolume"
 	echo "    shell     (sh)              Open rw shell in new snapshot before exiting"
-	echo "    rw                          Make root subvolume rw"
-	echo "    ro                          Make root subvolume ro"
+	echo "    root-rw                     Make root subvolume rw"
+	echo "    root-ro                     Make root subvolume ro"
 	echo ""
 	echo "Options:"
 	echo "    -h, --help                  Print this help message"

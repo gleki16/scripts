@@ -10,11 +10,11 @@ main() {
 		exit 0
 	fi
 
-	if [ "$do_copy_config" = 1 ]; then
-		copy_config
-	fi
 	if [ "$do_install_pkg" = 1 ]; then
 		install_pkg
+	fi
+	if [ "$do_copy_config" = 1 ]; then
+		copy_config
 	fi
 }
 
@@ -34,7 +34,7 @@ parse_arguments() {
 
 	while [ "$#" -gt 0 ]; do
 		case "$1" in
-			cf | config)
+			co | config)
 				do_copy_config=1
 				;;
 			in | install)
@@ -59,7 +59,7 @@ usage() {
 	echo "Install basic pkg and config."
 	echo ""
 	echo "Commands:"
-	echo "    config    (cf)              Copy config"
+	echo "    config    (co)              Copy config"
 	echo "    install   (in)              Install basic pkg"
 	echo ""
 	echo "Options:"
