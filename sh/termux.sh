@@ -10,11 +10,11 @@ main() {
 		exit 0
 	fi
 
-	if [ "$do_install_pkg" = 1 ]; then
-		install_pkg
-	fi
 	if [ "$do_copy_config" = 1 ]; then
 		copy_config
+	fi
+	if [ "$do_install_pkg" = 1 ]; then
+		install_pkg
 	fi
 }
 
@@ -33,11 +33,11 @@ parse_arguments() {
 			'')
 				do_install_proc=1
 				;;
-			in | install)
-				do_install_pkg=1
-				;;
 			cf | config)
 				do_copy_config=1
+				;;
+			in | install)
+				do_install_pkg=1
 				;;
 			-h | --help)
 				usage 0
@@ -53,12 +53,13 @@ parse_arguments() {
 usage() {
 	local exit_code="$1"
 
-	echo "Syntax: transactional-update [options] command"
+	echo "Syntax: termux.sh [options] command"
 	echo ""
-	echo "Applies package updates to a new snapshot without touching the running system."
+	echo "Install basic pkg and config."
 	echo ""
 	echo "Commands:"
-	echo "    dup       (up)              Update system to a new subvolume"
+	echo "    config    (cf)              Copy config"
+	echo "    install   (in)              Install basic pkg"
 	echo ""
 	echo "Options:"
 	echo "    -h, --help                  Print this help message"
@@ -134,7 +135,7 @@ set_nvim() {
 }
 
 error() {
-	local wrong_reason="$*"
+	local wrong_reason="$@"
 
 	echo -e "${r}error: ${h}${wrong_reason}"
 	exit 1
