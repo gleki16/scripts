@@ -228,6 +228,10 @@ create_snapshot() {
 	snapshot_id=$(snapper create --print-number --cleanup-algorithm=number --description=${desc[*]})
 	snapshot_dir="/.snapshots/$snapshot_id/snapshot"
 
+	new_snapshot_action
+}
+
+new_snapshot_action() {
 	set_snapshot_rw
 	set_default_snapshot
 	mount_snapshots
