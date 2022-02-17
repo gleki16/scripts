@@ -38,6 +38,7 @@ parse_arguments() {
 				;;
 			cf | config)
 				do_copy_config=1
+				;;
 			-h | --help)
 				usage 0
 				;;
@@ -68,7 +69,6 @@ usage() {
 install_proc() {
 	termux_set
 	install_pkg
-	clone_cfg_repo
 	copy_config
 	write_config
 	set_nvim
@@ -92,19 +92,46 @@ install_pkg() {
 	local nvim_pkg=(bat clang lua54 nodejs yarn)
 	local other_pkg=(man tree wget zsh)
 
+	pkg upgrade -y
 	pkg install -y ${base_pkg[@]} ${shell_pkg[@]} ${nvim_pkg[@]} ${other_pkg[@]}
 }
 
 clone_cfg_repo() {
+	cfg_dir="$HOME/dotfiles"
+
+	if [ ! -d "$cfg_dir" ]; then
+		git clone --depth=1 https://gitlab.com/glek/dotfiles.git ${cfg_dir}
+	fi
+
+	cd ${cfg_dir}
+	git config credential.helper store
+	git config --global user.email 'rraayy246@gmail.com'
+	git config --global user.name 'ray'
+	git config --global pull.rebase false
+	cd
 }
 
 copy_config() {
+	clone_cfg_repo
+
+	rsync -a ${cfg_dir}/.config $HOME
+	fish ${cfg_dir}/env.fish
 }
 
 write_config() {
+	chsh -s fish
+
+	echo -e 'if status is-interactive\n\tstarship init fish | source\nend' > $HOME/.config/fish/config.fish
+
+	curl -fLo $HOME/.termux/font.ttf --create-dirs https://github.com/powerline/fonts/raw/master/UbuntuMono/Ubuntu%20Mono%20derivative%20Powerline.ttf
+
+	set_nvim
 }
 
 set_nvim() {
+	git clone --depth=1 https://gitlab.com/glek/dotnvim.git ~/.config/nvim
+
+	#nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 }
 
 error() {
@@ -115,11 +142,3 @@ error() {
 }
 
 main "$@"
-
-
-pkg upgrade -y
-pkg install -y curl fish
-
-curl -fLo $HOME/termux.fish https://gitlab.com/glek/scripts/raw/main/sh/termux.fish
-fish $HOME/termux.fish
-rm $HOME/termux.fish
