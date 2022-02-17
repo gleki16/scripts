@@ -81,7 +81,7 @@ set_wg() {
 	port=51820
 
 	rm -rf *
-	if [ -n "$(wg)" ]; then
+	if [ -n "$(sudo wg)" ]; then
 		sudo wg-quick down wg0
 	fi
 
