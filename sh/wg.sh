@@ -88,11 +88,8 @@ set_wg() {
 	echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/ip_forward.conf
 	sudo sysctl $(cat /etc/sysctl.d/ip_forward.conf | sed 's/ //g')
 
-	wg genkey | tee pri1 | wg pubkey > pub1
-	wg genkey | tee pri2 | wg pubkey > pub2
-
-	chmod 600 pri1
-	chmod 600 pri2
+	wg_genkey 1
+	wg_genkey 2
 
 	cat << EOF | sudo tee /etc/wireguard/wg0.conf
 [Interface]
@@ -107,7 +104,7 @@ PublicKey = $(cat pub2)
 AllowedIPs = 10.10.10.2/32
 EOF
 
-    generate_mem_config 2
+    gen_mem_config 2
 
     sudo wg-quick up wg0
     sudo systemctl enable wg-quick@wg0
@@ -135,7 +132,7 @@ change_mem() {
 				chmod 600 pri${i}
 				sudo wg set wg0 peer $(cat pub${i}) allowed-ips 10.10.10.${i}/32
 				sudo wg-quick save wg0
-				generate_mem_config ${i}
+				gen_mem_config ${i}
 			fi
 		else
 			break
@@ -172,7 +169,14 @@ set_ip() {
 	ip=$(ip -4 addr show ${interface} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 }
 
-generate_mem_config() {
+wg_genkey() {
+	local i="$1"
+
+	wg genkey | tee pri${i} | wg pubkey > pub${i}
+	chmod 600 pri${i}
+}
+
+gen_mem_config() {
 	local mem_number="$1"
 
 	cat << EOF > wg${mem_number}.conf
