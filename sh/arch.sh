@@ -252,13 +252,13 @@ sel() {
 	shift
 	local option_list=($@)
 
-	for i in $(seq ${#option_list}); do
+	for i in $(seq ${#option_list[@]}); do
 		echo "${i}. ${option_list[$i]}"
 	done
 
 	while true; do
-		read -p 'echo -e "❯ "' ans
-		if echo -- "$ans" | grep -q '^[1-9][0-9]*$' && [ "$ans" -le ${#option_list} ]; then
+		read -p "❯ " ans
+		if echo -- "$ans" | grep -q '^[1-9][0-9]*$' && [ "$ans" -le ${#option_list[@]} ]; then
 			read -p "${option_list[$ans]}, are you sure? " sure
 			if [ "$sure" = 'y' -o "$sure" = '' ]; then
 				break
