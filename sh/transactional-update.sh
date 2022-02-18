@@ -42,7 +42,11 @@ main() {
 		[ "$do_update_system" = 1 ] ||
 		[ "$do_run_shell" = 1 ]
 	then
-		create_snapshot
+		if [ "$do_change_cont" = 1 ]; then
+			set_snapshot_dir_by_id
+		else
+			create_snapshot
+		fi
 		new_snapshot_action
 	fi
 
@@ -84,6 +88,11 @@ parse_arguments() {
 				;;
 			root-ro)
 				do_set_root_ro=1
+				;;
+			-c | --continue)
+				do_change_cont=1
+				shift
+				snapshot_id="$1"
 				;;
 			--etc-rw)
 				do_etc_rw=1
@@ -164,11 +173,7 @@ etc_rw() {
 }
 
 rollback() {
-	snapshot_dir="/.snapshots/${snapshot_id}/snapshot"
-
-	if [ ! -d "$snapshot_dir" ]; then
-		error "${snapshot_id} not a snapshot id"
-	fi
+	set_snapshot_dir_by_id
 
 	set_snapshot_rw
 	set_default_snapshot
@@ -234,11 +239,15 @@ new_snapshot_action() {
 	set_default_snapshot
 	mount_snapshots
 
+	if [ "$do_change_cont" = 1 ]; then
+		arch-chroot ${snapshot_dir} "$0" --grub-install
+	else
+		arch-chroot ${snapshot_dir} "$0" --grub-mkconfig
+	fi
+
 	if [ "$do_update_etc" = 1 ]; then
 		rsync -ah --delete --info=progress2 --inplace --no-whole-file --exclude=resolv.conf /etc ${snapshot_dir}
 	fi
-
-	arch-chroot ${snapshot_dir} "$0" --grub-mkconfig
 
 	if [ "$do_update_system" = 1 ]; then
 		echo 'sorting mirrors ...'
@@ -252,6 +261,14 @@ new_snapshot_action() {
 
 	set_snapshot_ro
 	umount_snapshots
+}
+
+set_snapshot_dir_by_id() {
+	snapshot_dir="/.snapshots/${snapshot_id}/snapshot"
+
+	if [ ! -d "$snapshot_dir" ]; then
+		error "${snapshot_id} not a snapshot id"
+	fi
 }
 
 mount_snapshots() {
