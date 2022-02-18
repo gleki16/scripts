@@ -47,7 +47,7 @@ main() {
 		else
 			create_snapshot
 		fi
-		new_snapshot_action
+		snapshot_action
 	fi
 
 	if [ "$do_reboot" = 1 ]; then
@@ -234,7 +234,7 @@ create_snapshot() {
 	snapshot_dir="/.snapshots/${snapshot_id}/snapshot"
 }
 
-new_snapshot_action() {
+snapshot_action() {
 	set_snapshot_rw
 	set_default_snapshot
 	mount_snapshots
