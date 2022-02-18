@@ -119,31 +119,31 @@ in_chroot_proc() {
     fix_mnt_point
 }
 
-function connect_wifi
-    set iw_dev (iw dev | awk '$1=="Interface"{print $2}')
+connect_wifi() {
+    local iw_dev=$(iw dev | awk '$1=="Interface"{print $2}')
 
-    iwctl station $iw_dev scan
-    iwctl station $iw_dev get-networks
-    read -p 'echo -e $r"ssid you want to connect to: "$h' ssid
-    iwctl station $iw_dev connect $ssid[1]
-end
+    iwctl station ${iw_dev} scan
+    iwctl station ${iw_dev} get-networks
+    read -p "wifi name you want to connect to: " ssid
+    iwctl station ${iw_dev} connect "${ssid}"
+}
 
-function open_ssh
-    set interface (ip -o -4 route show to default | awk '{print $5}')
-    set ip        (ip -4 addr show $interface | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+open_ssh() {
+    local interface=$(ip -o -4 route show to default | awk '{print $5}')
+    local ip=$(ip -4 addr show $interface | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 
-    read_only_format user_pass $r'enter'$h' your root passwd:' '^[-_,.a-zA-Z0-9]\+$'
-    echo "$USER:$user_pass" | chpasswd
+    read_only_format user_pass "enter your root passwd:" '^[-_,.a-zA-Z0-9]\+$'
+    echo "${USER}:${user_pass}" | chpasswd
     systemctl start sshd
 
-    echo -e $g'# ssh '$USER'@'$ip$h
-    echo -e $g"passwd = $user_pass"$h
-end
+    echo -e "${g}# ssh ${USER}@${ip}${h}"
+    echo -e "${g}passwd = ${user_pass}${h}"
+}
 
-function read_only_format
-    set var_name_to_be_set $argv[1]
-    set output_hint        $argv[2]
-    set matching_format    $argv[3]
+read_only_format() {
+    local var_name_to_be_set="$1"
+    local output_hint="$2"
+    local matching_format="$3"
 
     while true
         read -p 'echo -e "$output_hint "' ans
@@ -157,8 +157,8 @@ function read_only_format
         end
     end
 
-    set -g $var_name_to_be_set "$ans"
-end
+	eval ${var_name_to_be_set}="$ans"
+}
 
 function check_network
     if ping -c 1 -w 1 1.1.1.1 &>/dev/null
