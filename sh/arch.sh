@@ -453,8 +453,8 @@ function install_pkg
     set file_pkg       lf p7zip snapper
     set sync_pkg       chrony rsync
     set search_pkg     ctags fzf mlocate tree highlight
-    set new_search_pkg fd ripgrep bat tldr exa
-    set system_pkg     fcron btop man pacman-contrib pkgstats
+    set new_search_pkg fd ripgrep bat tealdeer exa zoxide
+    set system_pkg     fcron bottom man pacman-contrib pkgstats
     set maintain_pkg   arch-install-scripts dosfstools parted
     set security_pkg   dnscrypt-proxy gocryptfs nftables
     set depend_pkg     lua nodejs perl-file-mimeinfo qrencode yarn zsh
