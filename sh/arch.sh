@@ -553,7 +553,7 @@ function set_cfg_repo
     do_as_user git clone --depth 1 https://gitlab.com/glek/dotfiles.git $cfg_dir
 
     cd $cfg_dir
-    git config credential.helper store
+    git --global config credential.helper store
     do_as_user git config --global user.email 'rraayy246@gmail.com'
     do_as_user git config --global user.name 'ray'
     do_as_user git config --global pull.rebase false
