@@ -128,8 +128,7 @@ change_mem() {
 				sudo wg-quick save wg0
 				rm wg${i}.conf pub${i} pri${i}
 			else
-				wg genkey | tee pri${i} | wg pubkey > pub${i}
-				chmod 600 pri${i}
+				wg_genkey ${i}
 				sudo wg set wg0 peer $(cat pub${i}) allowed-ips 10.10.10.${i}/32
 				sudo wg-quick save wg0
 				gen_mem_config ${i}
