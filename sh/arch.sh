@@ -141,21 +141,21 @@ open_ssh() {
 }
 
 read_only_format() {
-    local var_name_to_be_set="$1"
-    local output_hint="$2"
-    local matching_format="$3"
+	local var_name_to_be_set="$1"
+	local output_hint="$2"
+	local matching_format="$3"
 
-    while true
-        read -p 'echo -e "$output_hint "' ans
-        if echo -- "$ans" | grep -q $matching_format
-            read -p 'echo -e "$ans, are you sure? "' sure
-            if test "$sure" = 'y' -o "$sure" = ''
-                break
-            end
-        else
-            echo -e $r'wrong format.'$h
-        end
-    end
+	while true; do
+		read -p "$output_hint" ans
+		if echo -- "$ans" | grep -q "$matching_format"; then
+			read -p "${ans}, are you sure? " sure
+			if [ "$sure" = 'y' -o "$sure" = '' ]; then
+				break
+			fi
+		else
+			echo -e "${r}wrong format.${h}"
+		fi
+	done
 
 	eval ${var_name_to_be_set}="$ans"
 }
