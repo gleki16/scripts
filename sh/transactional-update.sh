@@ -52,6 +52,10 @@ main() {
 }
 
 parse_arguments() {
+	if [ "$#" -eq 0 ]; then
+		do_update_system=1
+	fi
+
 	while [ "$#" -gt 0 ]; do
 		case "$1" in
 			bi | bin)
@@ -62,6 +66,7 @@ parse_arguments() {
 				;;
 			re | reboot)
 				do_reboot=1
+				do_update_system=1
 				;;
 			ro | rollback)
 				do_rollback=1
@@ -108,16 +113,17 @@ usage() {
 	echo "Applies package updates to a new snapshot without touching the running system."
 	echo ""
 	echo "Commands:"
-	echo "    bin       (bi)              Update this script"
-	echo "    dup       (up)              Update system to a new subvolume"
-	echo "    etc       (et)              Update /etc to a new subvolume"
-	echo "    reboot    (re)              Reboot after the action is completed"
-	echo "    rollback  (ro) [number]     Rollback to given subvolume"
-	echo "    shell     (sh)              Open rw shell in new snapshot before exiting"
+	echo "    bi, bin                     Update this script"
+	echo "    up, dup                     Update system to a new subvolume"
+	echo "    et, etc                     Update /etc to a new subvolume"
+	echo "    re, reboot                  Reboot after the update"
+	echo "    ro, rollback [number]       Rollback to given subvolume"
+	echo "    sh, shell                   Open rw shell in new snapshot before exiting"
 	echo "    root-rw                     Make root subvolume rw"
 	echo "    root-ro                     Make root subvolume ro"
 	echo ""
 	echo "Options:"
+	echo "    -c, --continue [number]     Use given snapshot as base"
 	echo "    -h, --help                  Print this help message"
 
 	exit ${exit_code}
