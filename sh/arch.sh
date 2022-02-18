@@ -597,11 +597,16 @@ function write_config
     end
 end
 
-function no_gui_set
-    set home_dir $argv[1]
+no_gui_set() {
+	local home_dir="$1"
 
-    echo -e 'if status is-interactive\n\tstarship init fish | source\nend' > $home_dir/.config/fish/config.fish
+	cat << EOF > $home_dir/.config/fish/config.fish
+if status is-interactive
+	starship init fish | source
+	zoxide init fish | source
 end
+EOF
+}
 
 function set_cron
     if test "$use_gui" = 1
