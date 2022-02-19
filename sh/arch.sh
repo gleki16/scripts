@@ -94,7 +94,6 @@ usage() {
 live_env_proc() {
 	check_network
 	update_system_clock
-	update_mirror
 	enter_user_var
 	use_gui_or_not
 	set_partition
@@ -170,9 +169,6 @@ check_network() {
 
 update_system_clock() {
 	timedatectl set-ntp true
-}
-
-update_mirror() {
 }
 
 enter_user_var() {
