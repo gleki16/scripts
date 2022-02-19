@@ -583,22 +583,20 @@ sync_cfg_dir() {
 }
 
 write_config() {
-	sed -i '/home\|root/s/bash/fish/' /etc/passwd
-
 	no_gui_set /root
 
 	set_cron
 	set_nvim
-	set_ssh
+	set_shell
 	set_snapper
+	set_ssh
 	set_swap
+	set_tldr
 
 	if [ "$use_gui" = 1 ]; then
-		do_as_user mkdir -p ${user_home}/a/pixra/bimple
-		sync_cfg_dir black.png ${user_home}/a/pixra/bimple/black.png
-
 		set_rustup
 		set_virtualizer
+		set_wallpaper
 	else
 		no_gui_set ${user_home}
 	fi
@@ -637,8 +635,8 @@ set_nvim() {
 	#rsync -r ${user_home}/.local/share/nvim /root/.local/share
 }
 
-set_ssh() {
-	ssh-keygen -A
+set_shell() {
+	sed -i '/home\|root/s/bash/fish/' /etc/passwd
 }
 
 set_snapper() {
@@ -666,6 +664,10 @@ EOF
 	chmod +x /bin/${script_name}
 }
 
+set_ssh() {
+	ssh-keygen -A
+}
+
 set_swap() {
 	local swap_dir="/var/lib/swap"
 	local swap_file="${swap_dir}/swapfile"
@@ -688,6 +690,10 @@ set_swap() {
 	sysctl $(cat /etc/sysctl.d/swappiness.conf | sed 's/ //g')
 }
 
+set_tldr() {
+	do_as_user tldr --update
+}
+
 set_rustup() {
 	do_as_user rustup default stable
 }
@@ -696,6 +702,11 @@ set_virtualizer() {
 	sed -i '/#unix_sock_group = "libvirt"/s/#//' /etc/libvirt/libvirtd.conf
 	sed -i '/#unix_sock_rw_perms = "0770"/s/#//' /etc/libvirt/libvirtd.conf
 	usermod -a -G libvirt ${user_name}
+}
+
+set_wallpaper() {
+	do_as_user mkdir -p ${user_home}/a/pixra/bimple
+	sync_cfg_dir black.png ${user_home}/a/pixra/bimple/black.png
 }
 
 set_auto_start() {
