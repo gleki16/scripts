@@ -263,7 +263,9 @@ sel() {
 set_subvol() {
 	local subvol_list=(var 'usr/local' srv root opt home .snapshots)
 
-	umount -fR /mnt &>/dev/null
+	if findmnt /mnt; then
+		umount -fR /mnt
+	fi
 
 	mkfs.btrfs -fL arch ${root_part}
 	mount ${root_part} /mnt
