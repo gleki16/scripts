@@ -341,7 +341,7 @@ change_root() {
 	curl -fLo /mnt/arch.fish ${script_url}
 	chmod +x /mnt/arch.fish
 
-	arch-chroot /mnt /arch.fish -i "$user_name" "$user_pass" "$use_gui"
+	arch-chroot /mnt /arch.fish --in-chroot "$user_name" "$user_pass" "$use_gui"
 
 	set_resolve
 	rm /mnt/arch.fish
