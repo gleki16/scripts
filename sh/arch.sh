@@ -334,9 +334,11 @@ set_hostname() {
 }
 
 change_root() {
+	local script_url="https://gitlab.com/glek/scripts/raw/main/sh/arch.sh"
+
 	rsync /etc/pacman.d/mirrorlist /mnt/etc/pacman.d
 
-	rsync "$0" /mnt/arch.fish
+	curl -fLo /mnt/arch.fish ${script_url}
 	chmod +x /mnt/arch.fish
 
 	arch-chroot /mnt /arch.fish -i "$user_name" "$user_pass" "$use_gui"
