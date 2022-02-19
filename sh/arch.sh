@@ -146,7 +146,7 @@ read_only_format() {
 
 	while true; do
 		read -p "$output_hint " ans
-		if echo -- "$ans" | grep -q "$matching_format"; then
+		if echo "$ans" | grep -q "$matching_format"; then
 			read -p "${ans}, are you sure? " sure
 			if [ "$sure" = 'y' -o "$sure" = '' ]; then
 				break
