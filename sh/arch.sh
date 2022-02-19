@@ -203,7 +203,7 @@ use_gui_or_not() {
 
 set_partition() {
 	echo -e "${r}automatic partition or manual partition: ${h}"
-	select ans "automatic" "manual"
+	sel ans "automatic" "manual"
 
 	if [ "$ans" = "automatic" ]; then
 		select_partition main_part
@@ -244,7 +244,7 @@ select_partition() {
 
 	lsblk
 	echo -e "${r}select a partition as the ${h}${partition_name}${r} partition:${h}"
-	select ${partition_name} ${partition_list[@]}
+	sel ${partition_name} ${partition_list[@]}
 }
 
 sel() {
@@ -252,70 +252,63 @@ sel() {
 	shift
 	local option_list=($@)
 
-	for i in $(seq ${#option_list[@]}); do
-		echo "${i}. ${option_list[$i]}"
-	done
-
-	while true; do
-		read -p "❯ " ans
-		if echo -- "$ans" | grep -q '^[1-9][0-9]*$' && [ "$ans" -le ${#option_list[@]} ]; then
-			read -p "${option_list[$ans]}, are you sure? " sure
+	select option in ${option_list[@]}; do
+		if [ "$option" != "" ] && [[ "${option_list[@]}" =~ "$option"  ]]; then
+			read -p "${option}, are you sure? " sure
 			if [ "$sure" = 'y' -o "$sure" = '' ]; then
 				break
 			fi
-		else
-			echo -e "${r}wrong format.${h}"
 		fi
 	done
 
-	eval ${var_name_to_be_set}=${option_list[$ans]}
+	eval ${var_name_to_be_set}=${option}
 }
 
-function set_subvol
-	set subvol_list var 'usr/local' srv root opt home .snapshots
+set_subvol() {
+	local subvol_list=(var 'usr/local' srv root opt home .snapshots)
 
 	umount -fR /mnt &>/dev/null
 
-	mkfs.btrfs -fL arch $root_part
-	mount $root_part /mnt
+	mkfs.btrfs -fL arch ${root_part}
+	mount ${root_part} /mnt
 
 	btrfs subvolume create /mnt/@
 
 	mkdir -p /mnt/@/{usr,boot/grub}
 
-	for subvol in $subvol_list
-		btrfs subvolume create /mnt/@/$subvol
-	end
+	for subvol in ${subvol_list[@]}; do
+		btrfs subvolume create /mnt/@/${subvol}
+	done
 
 	chattr +C /mnt/@/var
 
 	mkdir /mnt/@/.snapshots/1
 	btrfs subvolume create /mnt/@/.snapshots/1/snapshot
 
-	set default_id (btrfs inspect-internal rootid /mnt/@/.snapshots/1/snapshot)
-	btrfs subvolume set-default $default_id /mnt
+	local default_id=$(btrfs inspect-internal rootid /mnt/@/.snapshots/1/snapshot)
+	btrfs subvolume set-default ${default_id} /mnt
 
 	umount -R /mnt
 
-	mount -o autodefrag,compress=zstd $root_part /mnt
+	mount -o autodefrag,compress=zstd ${root_part} /mnt
 
-	for subvol in $subvol_list
-		mkdir -p /mnt/$subvol
-		mount -o subvol=/@/$subvol $root_part /mnt/$subvol
-	end
+	for subvol in ${subvol_list[@]}; do
+		mkdir -p /mnt/${subvol}
+		mount -o subvol=/@/${subvol} ${root_part} /mnt/${subvol}
+	done
 
-	if test $bios_type = 'uefi'
+	if [ "$bios_type" = 'uefi' ]; then
 		mkdir -p /mnt/boot/efi
-		mount $boot_part /mnt/boot/efi
-	end
+		mount ${boot_part} /mnt/boot/efi
+	fi
 
 	# 避免回滚时 pacman 数据库和软件不同步
-	mkdir -p	 /mnt/usr/lib/pacman/local /mnt/var/lib/pacman/local
+	mkdir -p     /mnt/usr/lib/pacman/local /mnt/var/lib/pacman/local
 	mount --bind /mnt/usr/lib/pacman/local /mnt/var/lib/pacman/local
-end
+}
 
-function install_base_system
-	set basic_pkg base base-devel linux linux-firmware btrfs-progs fish dhcpcd reflector vim
+install_base_system() {
+	local basic_pkg=(base base-devel linux linux-firmware btrfs-progs fish dhcpcd reflector vim)
 
 	pacman -Sy --noconfirm archlinux-keyring
 
@@ -323,10 +316,10 @@ function install_base_system
 	echo 'sorting mirrors ...'
 	reflector --latest 20 --protocol https --save /etc/pacman.d/mirrorlist --sort rate
 
-	pacstrap /mnt $basic_pkg
-end
+	pacstrap /mnt ${basic_pkg[@]}
+}
 
-function set_fstab
+set_fstab() {
 	# 绑定挂载无法被 genfstab 正确识别，所以先卸载
 	umount /mnt/var/lib/pacman/local
 
@@ -336,16 +329,16 @@ function set_fstab
 
 	# 手动写入绑定挂载
 	echo '/usr/lib/pacman/local /var/lib/pacman/local none defaults,bind 0 0' >> /mnt/etc/fstab
-end
+}
 
-function set_hostname
-	echo $host_name > /mnt/etc/hostname
-end
+set_hostname() {
+	echo ${host_name} > /mnt/etc/hostname
+}
 
-function change_root
+change_root() {
 	rsync /etc/pacman.d/mirrorlist /mnt/etc/pacman.d
 
-	rsync (status -f) /mnt/arch.fish
+	rsync "$0" /mnt/arch.fish
 	chmod +x /mnt/arch.fish
 
 	arch-chroot /mnt /arch.fish -i "$user_name" "$user_pass" "$use_gui"
@@ -356,234 +349,243 @@ function change_root
 
 	umount -R /mnt
 
-	echo -e $r'please reboot.'$h
-end
+	echo -e "${r}please reboot.${h}"
+}
 
-function set_resolve
-	echo -e 'nameserver ::1\nnameserver 127.0.0.1\noptions edns0 single-request-reopen' > /mnt/etc/resolv.conf
+set_resolve() {
+	cat << EOF > /mnt/etc/resolv.conf
+nameserver ::1
+nameserver 127.0.0.1
+options edns0 single-request-reopen
+EOF
 	chattr +i /mnt/etc/resolv.conf
-end
+}
 
-function set_time_zone
-	set city Asia/Shanghai
+set_time_zone() {
+	local city="Asia/Shanghai"
 
-	ln -sf /usr/share/zoneinfo/$city /etc/localtime
+	ln -sf /usr/share/zoneinfo/${city} /etc/localtime
 	hwclock --systohc
-end
+}
 
-function set_locale
+set_locale() {
 	sed -i '/\(en_US\|zh_CN\).UTF-8/s/#//' /etc/locale.gen
 	locale-gen
-	echo 'LANG=en_US.UTF-8' > /etc/locale.conf
-end
+	echo "LANG=en_US.UTF-8" > /etc/locale.conf
+}
 
-function set_network
-	set host_name  (cat /etc/hostname)
+set_network() {
+	local host_name=$(cat /etc/hostname)
 
-	echo -e '127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.1.1\t'$host_name'.localdomain '$host_name >> /etc/hosts
-end
+	cat << EOF >> /etc/hosts
+127.0.0.1	localhost
+::1		localhost
+127.0.1.1	${host_name}.localdomain ${host_name}
+EOF
+}
 
-function set_passwd
-	echo "root:$user_pass" | chpasswd
+set_passwd() {
+	echo "root:${user_pass}" | chpasswd
 
-	useradd -mG wheel $user_name
-	echo "$user_name:$user_pass" | chpasswd
+	useradd -mG wheel ${user_name}
+	echo "${user_name}:${user_pass}" | chpasswd
 	sed -i '/# %wheel ALL=(ALL) NOPASSWD: ALL/s/# //' /etc/sudoers
-end
+}
 
-function set_pacman
+set_pacman() {
 	sed -i '/^#Color$/s/#//' /etc/pacman.conf
 
-	# 添加 archlinuxcn 源
-	curl -fLo /etc/pacman.d/archlinuxcn-mirrorlist https://raw.githubusercontent.com/archlinuxcn/mirrorlist-repo/master/archlinuxcn-mirrorlist
-	sed -i '/Server =/s/^#//' /etc/pacman.d/archlinuxcn-mirrorlist
-	echo -e '[archlinuxcn]\nInclude = /etc/pacman.d/archlinuxcn-mirrorlist' >> /etc/pacman.conf
+	cat << EOF >> /etc/pacman.conf
+[archlinuxcn]
+Server = http://repo.archlinuxcn.org/\$arch
+EOF
 
 	pacman -Syy --noconfirm archlinuxcn-keyring
-end
+}
 
-function install_bootloader
-	set root_part  (df | awk '$6=="/" {print $1}')
-	set boot_pkg grub
+install_bootloader() {
+	local root_part=$(df | awk '$6=="/" {print $1}')
+	local boot_pkg=(grub)
 
-	if test $bios_type = 'uefi'
-		set -a boot_pkg efibootmgr
-	end
+	if [ "$bios_type" = 'uefi' ]; then
+		boot_pkg+=(efibootmgr)
+	fi
 
-	if test "$use_gui" = 1
-		set -a boot_pkg os-prober
-	end
+	if [ "$use_gui" = 1 ]; then
+		boot_pkg+=(os-prober)
+	fi
 
-	pacman_install $boot_pkg
+	pacman_install ${boot_pkg[@]}
 
-	switch $bios_type
-		case uefi
+	case "$bios_type" in
+		uefi)
 			grub-install --target=x86_64-efi --efi-directory=/boot/efi
-		case bios
-			if echo $root_part | grep -q 'nvme'
-				set grub_part (echo $root_part | sed 's/p[0-9]$//')
+			;;
+		bios)
+			if echo ${root_part} | grep -q 'nvme'; then
+				local grub_part=$(echo ${root_part} | sed 's/p[0-9]$//')
 			else
-				set grub_part (echo $root_part | sed 's/[0-9]$//')
-			end
-			grub-install --target=i386-pc $grub_part
-	end
+				local grub_part=$(echo ${root_part} | sed 's/[0-9]$//')
+			fi
+			grub-install --target=i386-pc ${grub_part}
+			;;
+	esac
 
-	if test "$use_gui" = 1
-		echo 'GRUB_DISABLE_OS_PROBER=false' >> /etc/default/grub
-	end
+	if [ "$use_gui" = 1 ]; then
+		echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+	fi
 	sed -i '/GRUB_TIMEOUT=/s/5/1/' /etc/default/grub
-	echo 'SUSE_BTRFS_SNAPSHOT_BOOTING=true' >> /etc/default/grub
+	echo "SUSE_BTRFS_SNAPSHOT_BOOTING=true" >> /etc/default/grub
 
 	grub-mkconfig -o /boot/grub/grub.cfg
-end
+}
 
-function pacman_install
+pacman_install() {
 
 	# 一次性安装太多软件容易安装失败，
 	# 所以连试三次，增加成功的几率。
 
-	set pkg_list $argv
+	local pkg_list=($@)
 
-	for i in (seq 3)
-		if pacman -S --needed --noconfirm $pkg_list
+	for i in $(seq 3); do
+		if pacman -S --needed --noconfirm ${pkg_list[@]}; then
 			break
-		end
-	end
-end
+		fi
+	done
+}
 
-function install_pkg
-	set network_pkg	curl git openssh wget wireguard-tools
-	set terminal_pkg   neovim python-pynvim starship
-	set file_pkg	   lf p7zip snapper
-	set sync_pkg	   chrony rsync
-	set search_pkg	 ctags fzf mlocate tree highlight
-	set new_search_pkg fd ripgrep bat tealdeer exa zoxide
-	set system_pkg	 fcron bottom man pacman-contrib pkgstats
-	set maintain_pkg   arch-install-scripts dosfstools parted
-	set security_pkg   dnscrypt-proxy gocryptfs nftables
-	set depend_pkg	 lua nodejs perl-file-mimeinfo qrencode yarn zsh
-	set aur_pkg		paru
+install_pkg() {
+	local network_pkg=(curl git openssh wget wireguard-tools)
+	local terminal_pkg=(neovim python-pynvim starship)
+	local file_pkg=(lf p7zip snapper)
+	local sync_pkg=(chrony rsync)
+	local search_pkg=(ctags fzf mlocate tree highlight)
+	local new_search_pkg=(fd ripgrep bat tealdeer exa zoxide)
+	local system_pkg=(fcron bottom man pacman-contrib pkgstats)
+	local maintain_pkg=(arch-install-scripts dosfstools parted)
+	local security_pkg=(dnscrypt-proxy gocryptfs nftables)
+	local depend_pkg=(lua nodejs perl-file-mimeinfo qrencode yarn zsh)
+	local aur_pkg=(paru)
 
-	pacman_install $network_pkg  $terminal_pkg
-	pacman_install $file_pkg	 $sync_pkg
-	pacman_install $search_pkg   $new_search_pkg
-	pacman_install $system_pkg   $maintain_pkg
-	pacman_install $security_pkg $depend_pkg $aur_pkg
+	pacman_install ${network_pkg[@]}  ${terminal_pkg[@]}
+	pacman_install ${file_pkg[@]}     ${sync_pkg[@]}
+	pacman_install ${search_pkg[@]}   ${new_search_pkg[@]}
+	pacman_install ${system_pkg[@]}   ${maintain_pkg[@]}
+	pacman_install ${security_pkg[@]} ${depend_pkg[@]} ${aur_pkg[@]}
 
 	# iptables-nft 不能直接装，需要进行确认
-	echo -e 'y\n\n' | pacman -S --needed iptables-nft
+	echo -e "y\n\n" | pacman -S --needed iptables-nft
 
-	if test "$use_gui" = 1
+	if [ "$use_gui" = 1 ]; then
 		install_gui_pkg
-	end
-end
+	fi
+}
 
-function install_gui_pkg
-	set lscpu (lscpu)
-	if echo $lscpu | grep -q 'AuthenticAMD'
-		set ucode_pkg amd-ucode
-	else if echo $lscpu | grep -q 'GenuineIntel'
-		set ucode_pkg intel-ucode
-	end
+install_gui_pkg() {
+	local lscpu="$(lscpu)"
+	if echo "$lscpu" | grep -q 'AuthenticAMD'; then
+		local ucode_pkg="amd-ucode"
+	elif echo "$lscpu" | grep -q 'GenuineIntel'; then
+		local ucode_pkg="intel-ucode"
+	fi
 
-	set lspci_VGA (lspci | grep '3D\|VGA')
-	if echo $lspci_VGA | grep -q 'AMD'
-		set gpu_pkg xf86-video-amdgpu
-	else if echo $lspci_VGA | grep -q 'Intel'
-		set gpu_pkg xf86-video-intel
-	else if echo $lspci_VGA | grep -q 'NVIDIA'
-		set gpu_pkg xf86-video-nouveau
-	end
+	local lspci_VGA="$(lspci | grep '3D\|VGA')"
+	if echo "$lspci_VGA" | grep -q 'AMD'; then
+		local gpu_pkg="xf86-video-amdgpu"
+	elif echo "$lspci_VGA" | grep -q 'Intel'; then
+		local gpu_pkg="xf86-video-intel"
+	elif echo "$lspci_VGA" | grep -q 'NVIDIA'; then
+		local gpu_pkg="xf86-video-nouveau"
+	fi
 
-	set audio_pkg	 alsa-utils pulseaudio pulseaudio-alsa pulseaudio-bluetooth
-	set bluetooth_pkg bluez bluez-utils blueman
-	set touch_pkg	 libinput
+	local audio_pkg=(alsa-utils pulseaudio pulseaudio-alsa pulseaudio-bluetooth)
+	local bluetooth_pkg=(bluez bluez-utils blueman)
+	local touch_pkg=(libinput)
 
-	set driver_pkg	$ucode_pkg $gpu_pkg $audio_pkg $bluetooth_pkg $touch_pkg
-	set manager_pkg   networkmanager tlp
-	set display_pkg   wayland sway swaybg swayidle swaylock xorg-xwayland
-	set desktop_pkg   alacritty i3status-rust grim slurp wofi lm_sensors qt5-wayland
-	set browser_pkg   firefox firefox-i18n-zh-cn
-	set media_pkg	 imv vlc
-	set input_pkg	 fcitx5-im fcitx5-rime
-	set control_pkg   brightnessctl playerctl lm_sensors upower
-	set virtual_pkg   flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf
-	set office_pkg	calibre libreoffice-fresh-zh-cn
-	set font_pkg	  noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ubuntu-font-family
-	set program_pkg   bash-language-server clang rust
+	local driver_pkg=(${ucode_pkg[@]} ${gpu_pkg[@]} ${audio_pkg[@]} ${bluetooth_pkg[@]} ${touch_pkg[@]})
+	local manager_pkg=(networkmanager tlp)
+	local display_pkg=(wayland sway swaybg swayidle swaylock xorg-xwayland)
+	local desktop_pkg=(alacritty i3status-rust grim slurp wofi lm_sensors qt5-wayland)
+	local browser_pkg=(firefox firefox-i18n-zh-cn)
+	local media_pkg=(imv vlc)
+	local input_pkg=(fcitx5-im fcitx5-rime)
+	local control_pkg=(brightnessctl playerctl lm_sensors upower)
+	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
+	local office_pkg=(calibre libreoffice-fresh-zh-cn)
+	local font_pkg=(noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ubuntu-font-family)
+	local program_pkg=(bash-language-server clang rustup)
 
-	pacman_install $driver_pkg  $manager_pkg
-	pacman_install $display_pkg $desktop_pkg
-	pacman_install $browser_pkg $media_pkg
-	pacman_install $input_pkg   $control_pkg
-	pacman_install $virtual_pkg $office_pkg
-	pacman_install $font_pkg	$program_pkg
-end
+	pacman_install ${driver_pkg[@]}  ${manager_pkg[@]}
+	pacman_install ${display_pkg[@]} ${desktop_pkg[@]}
+	pacman_install ${browser_pkg[@]} ${media_pkg[@]}
+	pacman_install ${input_pkg[@]}   ${control_pkg[@]}
+	pacman_install ${virtual_pkg[@]} ${office_pkg[@]}
+	pacman_install ${font_pkg[@]}    ${program_pkg[@]}
+}
 
-function copy_config
-	set -g user_home /home/$user_name
-	set user_mkdir gz xz
+copy_config() {
+	user_home="/home/${user_name}"
 
-	do_as_user mkdir -p $user_home/$user_mkdir
 	set_cfg_repo
 
-	fish $cfg_dir/env.fish
-	do_as_user fish $cfg_dir/env.fish
+	fish ${cfg_dir}/env.fish
+	do_as_user fish ${cfg_dir}/env.fish
 
 	sync_cfg_dir etc /
 	sync_cfg_dir .config /root
-	sync_cfg_dir .config $user_home
+	sync_cfg_dir .config ${user_home}
 
-	if test "$use_gui" = 1
-		sync_cfg_dir .local $user_home
-	end
-end
+	if [ "$use_gui" = 1 ]; then
+		sync_cfg_dir .local ${user_home}
+	fi
+}
 
-function do_as_user
+do_as_user() {
 
 	# 避免创建出的目录或文件，用户无权操作。
 
-	cd $user_home
-	sudo -u $user_name $argv
+	cd ${user_home}
+	sudo -u ${user_name} "$@"
 	cd
-end
+}
 
-function set_cfg_repo
+set_cfg_repo() {
 
 	# uz 是存放我所有设定的仓库
 
-	set -g cfg_dir $user_home/dotfiles
+	cfg_dir="${user_home}/dotfiles"
+	cfg_url="https://gitlab.com/glek/dotfiles.git"
 
-	do_as_user git clone --depth 1 https://gitlab.com/glek/dotfiles.git $cfg_dir
+	do_as_user git clone --depth=1 ${cfg_url} ${cfg_dir}
 
-	cd $cfg_dir
-	git --global config credential.helper store
+	cd ${cfg_dir}
+	do_as_user git config --global credential.helper store
+	do_as_user git config --global pull.rebase false
 	do_as_user git config --global user.email 'rraayy246@gmail.com'
 	do_as_user git config --global user.name 'ray'
-	do_as_user git config --global pull.rebase false
 	cd
-end
+}
 
-function sync_cfg_dir
+sync_cfg_dir() {
 
 	# 如果目标目录非用户的目录，则不复制所有者信息，
 	# 以免其他程序无权限操作。
 
-	set src_in_cfg_dir $argv[1]
-	set dest_dir	   $argv[2]
-	set src_dir $cfg_dir/$src_in_cfg_dir
+	local src_in_cfg_dir="$1"
+	local dest_dir="$2"
+	local src_dir="${cfg_dir}/${src_in_cfg_dir}"
 
-	if echo $dest_dir | grep -q '^/home'
-		rsync -a --inplace --no-whole-file $src_dir $dest_dir
+	if echo "$dest_dir" | grep -q '^/home'; then
+		rsync -a --inplace --no-whole-file ${src_dir} ${dest_dir}
 	else
-		rsync -rlptD --inplace --no-whole-file $src_dir $dest_dir
-	end
-end
+		rsync -rlptD --inplace --no-whole-file ${src_dir} ${dest_dir}
+	fi
+}
 
-function write_config
+write_config() {
 	sed -i '/home\|root/s/bash/fish/' /etc/passwd
 
-	no_gui_set  /root
+	no_gui_set /root
 
 	set_cron
 	set_nvim
@@ -591,20 +593,21 @@ function write_config
 	set_snapper
 	set_swap
 
-	if test "$use_gui" = 1
-		do_as_user mkdir -p $user_home/a/pixra/bimple
-		sync_cfg_dir black.png $user_home/a/pixra/bimple/black.png
+	if [ "$use_gui" = 1 ]; then
+		do_as_user mkdir -p ${user_home}/a/pixra/bimple
+		sync_cfg_dir black.png ${user_home}/a/pixra/bimple/black.png
 
+		set_rustup
 		set_virtualizer
 	else
-		no_gui_set $user_home
-	end
-end
+		no_gui_set ${user_home}
+	fi
+}
 
 no_gui_set() {
 	local home_dir="$1"
 
-	cat << EOF > $home_dir/.config/fish/config.fish
+	cat << EOF > ${home_dir}/.config/fish/config.fish
 if status is-interactive
 	starship init fish | source
 	zoxide init fish | source
@@ -612,25 +615,27 @@ end
 EOF
 }
 
-function set_cron
-	if test "$use_gui" = 1
-		sed '/and reboot/s/^/#/' $cfg_dir/cron > /tmp/cron
+set_cron() {
+	if [ "$use_gui" = 1 ]; then
+		sed '/and reboot/s/^/#/' ${cfg_dir}/cron > /tmp/cron
 		fcrontab /tmp/cron
 		rm /tmp/cron
 	else
-		fcrontab $cfg_dir/cron
-	end
-end
+		fcrontab ${cfg_dir}/cron
+	fi
+}
 
-function set_nvim
-	do_as_user git clone --depth=1 https://gitlab.com/glek/dotnvim.git ~/.config/nvim
+set_nvim() {
+	local dotnvim_url="https://gitlab.com/glek/dotnvim.git"
+
+	do_as_user git clone --depth=1 ${dotnvim_url} ~/.config/nvim
 
 	#do_as_user nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
 	#mkdir -p /root/.local/share
-	#rsync -r $user_home/.config/nvim /root/.config
-	#rsync -r $user_home/.local/share/nvim /root/.local/share
-end
+	#rsync -r ${user_home}/.config/nvim /root/.config
+	#rsync -r ${user_home}/.local/share/nvim /root/.local/share
+}
 
 set_ssh() {
 	ssh-keygen -A
@@ -661,58 +666,62 @@ EOF
 	chmod +x /bin/${script_name}
 }
 
-function set_swap
-	set swap_dir /var/lib/swap
-	set swap_file $swap_dir/swapfile
-	set swap_size 2G
+set_swap() {
+	local swap_dir="/var/lib/swap"
+	local swap_file="${swap_dir}/swapfile"
+	local swap_size=2G
 
-	mkdir $swap_dir
-	touch $swap_file
-	chattr +C $swap_file
-	chattr -c $swap_file
+	mkdir ${swap_dir}
+	touch ${swap_file}
+	chattr +C ${swap_file}
+	chattr -c ${swap_file}
 
-	fallocate -l $swap_size $swap_file
+	fallocate -l ${swap_size} ${swap_file}
 
-	chmod 600 $swap_file
-	mkswap $swap_file
+	chmod 600 ${swap_file}
+	mkswap ${swap_file}
 
-	echo $swap_file' none swap defaults 0 0' >> /etc/fstab
+	echo "${swap_file} none swap defaults 0 0" >> /etc/fstab
 
 	# 最大限度使用物理内存
-	echo 'vm.swappiness = 0' > /etc/sysctl.d/swappiness.conf
-	sysctl (cat /etc/sysctl.d/swappiness.conf | sed 's/ //g')
-end
+	echo "vm.swappiness = 0" > /etc/sysctl.d/swappiness.conf
+	sysctl $(cat /etc/sysctl.d/swappiness.conf | sed 's/ //g')
+}
 
-function set_virtualizer
+set_rustup() {
+	rustup default stable
+}
+
+set_virtualizer() {
 	sed -i '/#unix_sock_group = "libvirt"/s/#//' /etc/libvirt/libvirtd.conf
 	sed -i '/#unix_sock_rw_perms = "0770"/s/#//' /etc/libvirt/libvirtd.conf
-	usermod -a -G libvirt $user_name
-end
+	usermod -a -G libvirt ${user_name}
+}
 
-function set_auto_start
-	set mask_list	systemd-resolved
-	set disable_list systemd-timesyncd
-	set enable_list  chronyd dnscrypt-proxy fcron nftables paccache.timer pkgstats.timer sshd
+set_auto_start() {
+	local mask_list=(systemd-resolved)
+	local disable_list=(systemd-timesyncd)
+	local enable_list=(chronyd dnscrypt-proxy fcron nftables paccache.timer pkgstats.timer sshd)
 
-	if test "$use_gui" = 1
+	if [ "$use_gui" = 1 ]; then
 		# dhcpcd 和 NetworkManager 不能同时启动
-		set -a disable_list dhcpcd
-		set -a enable_list  bluetooth NetworkManager tlp
+		disable_list+=(dhcpcd)
+		enable_list+=(bluetooth NetworkManager tlp)
 	else
-		set -a enable_list  dhcpcd
-	end
+		enable_list+=(dhcpcd)
+	fi
 
-	systemctl mask	$mask_list
-	systemctl disable $disable_list
-	systemctl enable  $enable_list
-end
+	systemctl mask    ${mask_list[@]}
+	systemctl disable ${disable_list[@]}
+	systemctl enable  ${enable_list[@]}
+}
 
-function fix_mnt_point
-	set default_subvol '\/@\/.snapshots\/1\/snapshot'
+fix_mnt_point() {
+	local default_subvol="\/@\/.snapshots\/1\/snapshot"
 
-	sed -i '/'$default_subvol'/s/rw,/ro,/' /etc/fstab
-	sed -i '/'$default_subvol'/s/,subvolid=[0-9]\+,subvol='$default_subvol'//' /etc/fstab
-end
+	sed -i "/${default_subvol}/s/rw,/ro,/" /etc/fstab
+	sed -i "/${default_subvol}/s/,subvolid=[0-9]\+,subvol=${default_subvol}//" /etc/fstab
+}
 
 check_efi() {
 	if [ -d /sys/firmware/efi ]; then
