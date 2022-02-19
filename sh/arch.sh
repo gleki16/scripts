@@ -628,7 +628,7 @@ set_cron() {
 set_nvim() {
 	local dotnvim_url="https://gitlab.com/glek/dotnvim.git"
 
-	do_as_user git clone --depth=1 ${dotnvim_url} ~/.config/nvim
+	do_as_user git clone --depth=1 ${dotnvim_url} ${user_home}/.config/nvim
 
 	#do_as_user nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 
