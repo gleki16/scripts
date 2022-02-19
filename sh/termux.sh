@@ -82,7 +82,7 @@ change_source() {
 
 install_pkg() {
 	local base_pkg=(curl git openssh rsync)
-	local shell_pkg=(fish lf neovim starship)
+	local shell_pkg=(fish lf neovim starship zoxide)
 	local nvim_pkg=(bat clang lua54 nodejs yarn)
 	local other_pkg=(man tree wget zsh)
 
@@ -115,7 +115,12 @@ copy_config() {
 write_config() {
 	chsh -s fish
 
-	echo -e 'if status is-interactive\n\tstarship init fish | source\nend' > $HOME/.config/fish/config.fish
+	cat << EOF > $HOME/.config/fish/config.fish
+if status is-interactive
+	starship init fish | source
+	zoxide init fish | source
+end
+EOF
 
 	curl -fLo $HOME/.termux/font.ttf --create-dirs https://github.com/powerline/fonts/raw/master/UbuntuMono/Ubuntu%20Mono%20derivative%20Powerline.ttf
 
