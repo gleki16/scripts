@@ -689,7 +689,7 @@ set_swap() {
 }
 
 set_rustup() {
-	rustup default stable
+	do_as_user rustup default stable
 }
 
 set_virtualizer() {
