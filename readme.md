@@ -140,7 +140,7 @@ cdhsmcq 彩虹猫
 请先[安装 arch](arch.md)
 
 ```shell
-bash -c "$(curl -fsSL https://gitlab.com/glek/scripts/raw/main/sh/arch.sh)"
+bash <(curl -fsSL https://gitlab.com/glek/scripts/raw/main/sh/arch.sh)
 ```
 
 
@@ -149,12 +149,12 @@ bash -c "$(curl -fsSL https://gitlab.com/glek/scripts/raw/main/sh/arch.sh)"
 请先[安装 arch](archv.md)
 
 ```shell
-bash -c "$(curl -fsSL https://gitlab.com/glek/scripts/raw/main/sh/arch.sh)"
+bash <(curl -fsSL https://gitlab.com/glek/scripts/raw/main/sh/arch.sh)
 ```
 
 
 ### Termux 配置 ###
 
 ```shell
-bash -c "$(curl -fsSL https://gitlab.com/glek/scripts/raw/main/sh/termux.sh)"
+bash <(curl -fsSL https://gitlab.com/glek/scripts/raw/main/sh/termux.sh)
 ```
