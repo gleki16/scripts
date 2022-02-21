@@ -455,7 +455,7 @@ pacman_install() {
 }
 
 install_pkg() {
-	local network_pkg=(curl git openssh wget wireguard-tools)
+	local network_pkg=(curl git go-ipfs openssh wget wireguard-tools)
 	local terminal_pkg=(neovim python-pynvim starship)
 	local file_pkg=(lf p7zip snapper)
 	local sync_pkg=(chrony rsync)
@@ -586,6 +586,7 @@ write_config() {
 	no_gui_set /root
 
 	set_cron
+	set_ipfs
 	set_nvim
 	set_shell
 	set_snapper
@@ -621,6 +622,11 @@ set_cron() {
 	else
 		fcrontab ${cfg_dir}/cron
 	fi
+}
+
+set_ipfs() {
+	do_as_user ipfs init
+	systemctl enable ipfs@${user_name}
 }
 
 set_nvim() {
