@@ -456,7 +456,7 @@ pacman_install() {
 
 install_pkg() {
 	local network_pkg=(curl git go-ipfs openssh wget wireguard-tools)
-	local terminal_pkg=(neovim python-pynvim starship)
+	local terminal_pkg=(helix starship)
 	local file_pkg=(lf p7zip snapper)
 	local sync_pkg=(chrony rsync)
 	local search_pkg=(ctags fzf mlocate tree highlight)
@@ -587,7 +587,6 @@ write_config() {
 
 	set_cron
 	set_ipfs
-	set_nvim
 	set_shell
 	set_snapper
 	set_ssh
@@ -627,18 +626,6 @@ set_cron() {
 set_ipfs() {
 	do_as_user ipfs init
 	systemctl enable ipfs@${user_name}
-}
-
-set_nvim() {
-	local dotnvim_url="https://gitlab.com/glek/dotnvim.git"
-
-	do_as_user git clone --depth=1 ${dotnvim_url} ${user_home}/.config/nvim
-
-	#do_as_user nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
-
-	#mkdir -p /root/.local/share
-	#rsync -r ${user_home}/.config/nvim /root/.config
-	#rsync -r ${user_home}/.local/share/nvim /root/.local/share
 }
 
 set_shell() {

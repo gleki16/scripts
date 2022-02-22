@@ -82,12 +82,11 @@ change_source() {
 
 install_pkg() {
 	local base_pkg=(curl git openssh rsync)
-	local shell_pkg=(fish lf neovim starship zoxide)
-	local nvim_pkg=(bat clang lua54 nodejs yarn)
-	local other_pkg=(man tree wget zsh)
+	local shell_pkg=(fish lf helix starship zoxide)
+	local other_pkg=(bat man tree wget zsh)
 
 	pkg upgrade -y
-	pkg install -y ${base_pkg[@]} ${shell_pkg[@]} ${nvim_pkg[@]} ${other_pkg[@]}
+	pkg install -y ${base_pkg[@]} ${shell_pkg[@]} ${other_pkg[@]}
 }
 
 clone_cfg_repo() {
@@ -123,14 +122,6 @@ end
 EOF
 
 	curl -fLo $HOME/.termux/font.ttf --create-dirs https://github.com/powerline/fonts/raw/master/UbuntuMono/Ubuntu%20Mono%20derivative%20Powerline.ttf
-
-	set_nvim
-}
-
-set_nvim() {
-	git clone --depth=1 https://gitlab.com/glek/dotnvim.git ~/.config/nvim
-
-	#nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 }
 
 error() {
