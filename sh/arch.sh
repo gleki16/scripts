@@ -513,14 +513,13 @@ install_gui_pkg() {
 	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
 	local office_pkg=(calibre libreoffice-fresh-zh-cn)
 	local font_pkg=(noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ubuntu-font-family)
-	local program_pkg=(bash-language-server clang rustup)
 
 	pacman_install ${driver_pkg[@]}  ${manager_pkg[@]}
 	pacman_install ${display_pkg[@]} ${desktop_pkg[@]}
 	pacman_install ${browser_pkg[@]} ${media_pkg[@]}
 	pacman_install ${input_pkg[@]}   ${control_pkg[@]}
 	pacman_install ${virtual_pkg[@]} ${office_pkg[@]}
-	pacman_install ${font_pkg[@]}    ${program_pkg[@]}
+	pacman_install ${font_pkg[@]}
 }
 
 copy_config() {
@@ -594,7 +593,6 @@ write_config() {
 	set_tldr
 
 	if [ "$use_gui" = 1 ]; then
-		set_rustup
 		set_virtualizer
 		set_wallpaper
 	else
@@ -685,10 +683,6 @@ set_swap() {
 
 set_tldr() {
 	do_as_user tldr --update
-}
-
-set_rustup() {
-	do_as_user rustup default stable
 }
 
 set_virtualizer() {
