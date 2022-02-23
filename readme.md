@@ -90,7 +90,7 @@
 - (安卓文件管理) MiXplorer
 - (安卓音乐播放器) Vinyl Music Player
 - (安卓终端) Termux
-- (文档编辑器) Vim
+- (文档编辑器) helix
 - (文件管理器) lf
 - (即时通信) matrix
 
