@@ -419,9 +419,6 @@ install_bootloader() {
 
 	pacman_install ${boot_pkg[@]}
 
-	sed -i 's/rootflags=subvol=${rootsubvol} //' /etc/grub.d/10_linux
-	sed -i 's/rootflags=subvol=${rootsubvol} //' /etc/grub.d/20_linux_xen
-
 	case "$bios_type" in
 		uefi)
 			grub-install --target=x86_64-efi --efi-directory=/boot/efi
@@ -436,10 +433,13 @@ install_bootloader() {
 			;;
 	esac
 
+	sed -i 's/rootflags=subvol=${rootsubvol} //' /etc/grub.d/10_linux
+	sed -i 's/rootflags=subvol=${rootsubvol} //' /etc/grub.d/20_linux_xen
+	sed -i '/GRUB_TIMEOUT=/s/5/1/' /etc/default/grub
+
 	if [ "$use_gui" = 1 ]; then
 		echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
 	fi
-	sed -i '/GRUB_TIMEOUT=/s/5/1/' /etc/default/grub
 
 	grub-mkconfig -o /boot/grub/grub.cfg
 }
@@ -461,7 +461,7 @@ pacman_install() {
 install_pkg() {
 	local network_pkg=(curl git go-ipfs openssh wget wireguard-tools)
 	local terminal_pkg=(helix starship zoxide)
-	local file_pkg=(lf p7zip snapper)
+	local file_pkg=(lf p7zip snapper snap-pac)
 	local sync_pkg=(chrony rsync)
 	local search_pkg=(fzf mlocate tree)
 	local new_search_pkg=(fd ripgrep bat tealdeer exa)
