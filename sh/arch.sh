@@ -391,7 +391,7 @@ set_passwd() {
 
 	useradd -mG wheel ${user_name}
 	echo "${user_name}:${user_pass}" | chpasswd
-	sed -i '/# %wheel ALL=(ALL) NOPASSWD: ALL/s/# //' /etc/sudoers
+	sed -i '/# %wheel .* NOPASSWD/s/# //' /etc/sudoers
 }
 
 set_pacman() {
