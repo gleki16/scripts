@@ -203,7 +203,6 @@ set_partition() {
 
 	if [ "$ans" = "automatic" ]; then
 		select_partition main_part
-		main_part="/dev/${main_part}"
 
 		parted -s ${main_part} mklabel gpt
 		if [ "$bios_type" = "uefi" ]; then
@@ -232,8 +231,6 @@ set_partition() {
 	else
 		select_partition boot_part
 		select_partition root_part
-		boot_part="/dev/${boot_part}"
-		root_part="/dev/${root_part}"
 	fi
 }
 
@@ -243,7 +240,9 @@ select_partition() {
 
 	lsblk -o NAME,SIZE
 	echo -e "${r}select a partition as the ${h}${partition_name}${r} partition:${h}"
-	sel ${partition_name} ${partition_list[@]}
+
+	sel part ${partition_list[@]}
+	eval ${partition_name}="/dev/${part}"
 }
 
 sel() {
