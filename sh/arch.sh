@@ -460,15 +460,15 @@ pacman_install() {
 
 install_pkg() {
 	local network_pkg=(curl git go-ipfs openssh wget wireguard-tools)
-	local terminal_pkg=(helix starship)
+	local terminal_pkg=(helix starship zoxide)
 	local file_pkg=(lf p7zip snapper)
 	local sync_pkg=(chrony rsync)
-	local search_pkg=(ctags fzf mlocate tree highlight)
-	local new_search_pkg=(fd ripgrep bat tealdeer exa zoxide)
+	local search_pkg=(fzf mlocate tree)
+	local new_search_pkg=(fd ripgrep bat tealdeer exa)
 	local system_pkg=(fcron bottom man pacman-contrib pkgstats)
 	local maintain_pkg=(arch-install-scripts dosfstools parted)
 	local security_pkg=(dnscrypt-proxy gocryptfs nftables)
-	local depend_pkg=(lua nodejs perl-file-mimeinfo qrencode yarn zsh)
+	local depend_pkg=(perl-file-mimeinfo qrencode zsh)
 	local aur_pkg=(paru)
 
 	pacman_install ${network_pkg[@]}  ${terminal_pkg[@]}
