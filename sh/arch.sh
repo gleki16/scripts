@@ -717,7 +717,6 @@ set_auto_start() {
 fix_mnt_point() {
 	local default_subvol="\/@\/.snapshots\/1\/snapshot"
 
-	sed -i "/${default_subvol}/s/rw,/ro,/" /etc/fstab
 	sed -i "/${default_subvol}/s/,subvolid=[0-9]\+,subvol=${default_subvol}//" /etc/fstab
 }
 
