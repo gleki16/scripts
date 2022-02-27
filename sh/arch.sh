@@ -617,7 +617,7 @@ EOF
 
 set_cron() {
 	if [ "$use_gui" = 1 ]; then
-		sed '/and reboot/s/^/#/' ${cfg_dir}/cron > /tmp/cron
+		sed '/[^@]reboot/s/^/#/' ${cfg_dir}/cron > /tmp/cron
 		fcrontab /tmp/cron
 		rm /tmp/cron
 	else
