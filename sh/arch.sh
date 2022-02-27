@@ -264,7 +264,7 @@ sel() {
 }
 
 set_subvol() {
-	local subvol_list=(var 'usr/local' srv root opt home .snapshots)
+	local subvol_list=('boot/grub' var 'usr/local' srv root opt home .snapshots)
 
 	if findmnt /mnt; then
 		umount -fR /mnt
@@ -275,7 +275,7 @@ set_subvol() {
 
 	btrfs subvolume create /mnt/@
 
-	mkdir -p /mnt/@/{usr,boot/grub}
+	mkdir -p /mnt/@/{usr,boot}
 
 	for subvol in ${subvol_list[@]}; do
 		btrfs subvolume create /mnt/@/${subvol}
