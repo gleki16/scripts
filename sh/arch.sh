@@ -705,7 +705,7 @@ set_wallpaper() {
 set_auto_start() {
 	local mask_list=(systemd-resolved)
 	local disable_list=(systemd-timesyncd)
-	local enable_list=(chronyd dnscrypt-proxy fcron nftables paccache.timer pkgstats.timer sshd)
+	local enable_list=(chronyd dnscrypt-proxy fcron grub-btrfs.path nftables paccache.timer pkgstats.timer sshd)
 
 	if [ "$use_gui" = 1 ]; then
 		# dhcpcd 和 NetworkManager 不能同时启动
