@@ -203,24 +203,27 @@ set_partition() {
 
 	if [ "$ans" = "automatic" ]; then
 		select_partition main_part
+		main_part="/dev/${main_part}"
 
-		parted /dev/${main_part} mklabel gpt
+		parted -s ${main_part} mklabel gpt
 		if [ "$bios_type" = "uefi" ]; then
-			parted /dev/${main_part} mkpart esp 1m 513m
-			parted /dev/${main_part} set 1 boot on
-			parted /dev/${main_part} mkpart arch 513m 100%
+			parted -s ${main_part} \
+				mkpart esp 1m 513m \
+				set 1 esp on \
+				mkpart arch 513m 100%
 		else
-			parted /dev/${main_part} mkpart grub 1m 3m
-			parted /dev/${main_part} set 1 bios_grub on
-			parted /dev/${main_part} mkpart arch 3m 100%
+			parted -s ${main_part} \
+				mkpart grub 1m 3m \
+				set 1 bios_grub on \
+				mkpart arch 3m 100%
 		fi
 
 		if echo ${main_part} | grep -q 'nvme'; then
-			boot_part="/dev/${main_part}p1"
-			root_part="/dev/${main_part}p2"
+			boot_part="${main_part}p1"
+			root_part="${main_part}p2"
 		else
-			boot_part="/dev/${main_part}1"
-			root_part="/dev/${main_part}2"
+			boot_part="${main_part}1"
+			root_part="${main_part}2"
 		fi
 
 		if [ "$bios_type" = "uefi" ]; then
