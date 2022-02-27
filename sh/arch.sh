@@ -291,7 +291,7 @@ set_subvol() {
 
 	umount -R /mnt
 
-	mount -o autodefrag,compress=zstd ${root_part} /mnt
+	mount -o noatime,autodefrag,compress=zstd ${root_part} /mnt
 
 	for subvol in ${subvol_list[@]}; do
 		mkdir -p /mnt/${subvol}
@@ -655,6 +655,7 @@ set_snapper() {
   <description>first root filesystem</description>
 </snapshot>
 EOF
+	chmod 600 /.snapshots/1/info.xml
 
 	curl -fLo /bin/${script_name} ${script_url}
 	chmod +x /bin/${script_name}
