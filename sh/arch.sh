@@ -348,7 +348,6 @@ change_root() {
 
 	set_resolve
 	rm /mnt/arch.fish
-	btrfs property set /mnt/.snapshots/1/snapshot ro true
 
 	umount -R /mnt
 
@@ -636,15 +635,13 @@ set_shell() {
 }
 
 set_snapper() {
-	local script_name="transactional-update"
-	local script_url="https://gitlab.com/glek/scripts/raw/main/sh/transactional-update.sh"
+	local date=$(date +'%F %T')
 
 	# 防止快照被索引
 	sed -i '/PRUNENAMES/s/.git/& .snapshots/' /etc/updatedb.conf
 
 	sed -i '/SNAPPER_CONFIGS=/s/""/"root"/' /etc/conf.d/snapper
 
-	local date=$(date +'%F %T')
 	cat << EOF > /.snapshots/1/info.xml
 <?xml version="1.0"?>
 <snapshot>
@@ -656,9 +653,6 @@ set_snapper() {
 </snapshot>
 EOF
 	chmod 600 /.snapshots/1/info.xml
-
-	curl -fLo /bin/${script_name} ${script_url}
-	chmod +x /bin/${script_name}
 }
 
 set_ssh() {
