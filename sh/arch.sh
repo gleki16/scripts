@@ -503,7 +503,7 @@ install_gui_pkg() {
 		local gpu_pkg="xf86-video-nouveau"
 	fi
 
-	local audio_pkg=(alsa-utils pulseaudio pulseaudio-alsa pulseaudio-bluetooth)
+	local audio_pkg=(pipewire pipewire-alsa pipewire-pulse)
 	local bluetooth_pkg=(bluez bluez-utils blueman)
 	local touch_pkg=(libinput)
 
