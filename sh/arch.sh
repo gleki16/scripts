@@ -236,9 +236,9 @@ set_partition() {
 
 select_partition() {
 	local partition_name="$1"
-	local partition_list=($(lsblk -l | awk '{ print $1 }' | grep '^\(nvme\|sd.\|vd.\)'))
+	local partition_list=($(lsblk -lno NAME | grep '^\(nvme\|sd.\|vd.\)'))
 
-	lsblk
+	lsblk -o NAME,SIZE
 	echo -e "${r}select a partition as the ${h}${partition_name}${r} partition:${h}"
 	sel ${partition_name} ${partition_list[@]}
 }
@@ -405,7 +405,7 @@ EOF
 
 install_bootloader() {
 	local root_part=$(df | awk '$6=="/" {print $1}')
-	local boot_pkg=(grub)
+	local boot_pkg=(grub grub-btrfs)
 
 	if [ "$bios_type" = 'uefi' ]; then
 		boot_pkg+=(efibootmgr)
@@ -416,6 +416,9 @@ install_bootloader() {
 	fi
 
 	pacman_install ${boot_pkg[@]}
+
+	sed -i 's/rootflags=subvol=${rootsubvol} //' /etc/grub.d/10_linux
+	sed -i 's/rootflags=subvol=${rootsubvol} //' /etc/grub.d/20_linux_xen
 
 	case "$bios_type" in
 		uefi)
@@ -435,7 +438,6 @@ install_bootloader() {
 		echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
 	fi
 	sed -i '/GRUB_TIMEOUT=/s/5/1/' /etc/default/grub
-	echo "SUSE_BTRFS_SNAPSHOT_BOOTING=true" >> /etc/default/grub
 
 	grub-mkconfig -o /boot/grub/grub.cfg
 }
@@ -482,10 +484,10 @@ install_pkg() {
 }
 
 install_gui_pkg() {
-	local lscpu="$(lscpu)"
-	if echo "$lscpu" | grep -q 'AuthenticAMD'; then
+	local cpu_vendor=$(grep vendor_id /proc/cpuinfo)
+	if echo "$cpu_vendor" | grep -q 'AuthenticAMD'; then
 		local ucode_pkg="amd-ucode"
-	elif echo "$lscpu" | grep -q 'GenuineIntel'; then
+	elif echo "$cpu_vendor" | grep -q 'GenuineIntel'; then
 		local ucode_pkg="intel-ucode"
 	fi
 
