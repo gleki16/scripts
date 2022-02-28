@@ -3,7 +3,7 @@ if [ "$1" = "in" ]; then
 
 	# 不升级数据库
 	sudo sed -i '/#IgnorePkg/s/#//' /etc/pacman.conf
-	if ! grep -q 'postgresql' /etc/pacman.conf
+	if ! grep -q 'postgresql' /etc/pacman.conf; then
 		sudo sed -i '/IgnorePkg   =/s/IgnorePkg   =/& postgresql postgresql-libs/' /etc/pacman.conf
 	fi
 
