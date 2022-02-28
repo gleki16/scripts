@@ -263,7 +263,7 @@ sel() {
 }
 
 set_subvol() {
-	local subvol_list=('boot/grub' var 'usr/local' srv root opt home .snapshots)
+	local subvol_list=(.snapshots 'boot/grub' home opt root srv 'usr/local' var)
 
 	if findmnt /mnt; then
 		umount -fR /mnt
@@ -274,9 +274,11 @@ set_subvol() {
 
 	btrfs subvolume create /mnt/@
 
-	mkdir -p /mnt/@/{usr,boot}
-
 	for subvol in ${subvol_list[@]}; do
+		if [ $(dirname $subvol) != . ]; then
+			mkdir -p /mnt/@/$(dirname $subvol)
+		fi
+
 		btrfs subvolume create /mnt/@/${subvol}
 	done
 
@@ -634,13 +636,12 @@ set_shell() {
 }
 
 set_snapper() {
-	local date=$(date +'%F %T')
-
 	# 防止快照被索引
 	sed -i '/PRUNENAMES/s/.git/& .snapshots/' /etc/updatedb.conf
 
 	sed -i '/SNAPPER_CONFIGS=/s/""/"root"/' /etc/conf.d/snapper
 
+	local date=$(date +'%F %T')
 	cat << EOF > /.snapshots/1/info.xml
 <?xml version="1.0"?>
 <snapshot>
