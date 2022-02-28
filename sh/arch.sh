@@ -275,10 +275,7 @@ set_subvol() {
 	btrfs subvolume create /mnt/@
 
 	for subvol in ${subvol_list[@]}; do
-		if [ $(dirname $subvol) != . ]; then
-			mkdir -p /mnt/@/$(dirname $subvol)
-		fi
-
+		mkdir -p /mnt/@/$(dirname $subvol)
 		btrfs subvolume create /mnt/@/${subvol}
 	done
 
@@ -434,8 +431,10 @@ install_bootloader() {
 			;;
 	esac
 
+	# 修正 grub 查找内核
 	sed -i 's/rootflags=subvol=${rootsubvol} //' /etc/grub.d/10_linux
 	sed -i 's/rootflags=subvol=${rootsubvol} //' /etc/grub.d/20_linux_xen
+
 	sed -i '/GRUB_TIMEOUT=/s/5/1/' /etc/default/grub
 
 	if [ "$use_gui" = 1 ]; then
@@ -660,11 +659,10 @@ set_ssh() {
 }
 
 set_swap() {
-	local swap_dir="/var/lib/swap"
-	local swap_file="${swap_dir}/swapfile"
+	local swap_file="/var/lib/swap/swapfile"
 	local swap_size=2G
 
-	mkdir ${swap_dir}
+	mkdir -p $(dirname $swap_file)
 	touch ${swap_file}
 	chattr +C ${swap_file}
 	chattr -c ${swap_file}
