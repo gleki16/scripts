@@ -513,7 +513,7 @@ install_gui_pkg() {
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(imv vlc)
 	local input_pkg=(fcitx5-im fcitx5-rime)
-	local control_pkg=(light playerctl)
+	local control_pkg=(light playerctl sddm)
 	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
 	local office_pkg=(calibre libreoffice-fresh-zh-cn)
 	local font_pkg=(noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ubuntu-font-family)
@@ -708,7 +708,7 @@ set_auto_start() {
 	if [ "$use_gui" = 1 ]; then
 		# dhcpcd 和 NetworkManager 不能同时启动
 		disable_list+=(dhcpcd)
-		enable_list+=(bluetooth libvirtd NetworkManager tlp)
+		enable_list+=(bluetooth libvirtd NetworkManager sddm tlp)
 	else
 		enable_list+=(dhcpcd)
 	fi
