@@ -513,7 +513,7 @@ install_gui_pkg() {
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(imv vlc)
 	local input_pkg=(fcitx5-im fcitx5-rime)
-	local control_pkg=(brightnessctl playerctl lm_sensors)
+	local control_pkg=(light playerctl)
 	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
 	local office_pkg=(calibre libreoffice-fresh-zh-cn)
 	local font_pkg=(noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ubuntu-font-family)
@@ -597,6 +597,7 @@ write_config() {
 	set_tldr
 
 	if [ "$use_gui" = 1 ]; then
+		set_light
 		set_virtualizer
 		set_wallpaper
 	else
@@ -683,10 +684,14 @@ set_tldr() {
 	do_as_user tldr --update
 }
 
+set_light() {
+	usermod -aG video ${user_name}
+}
+
 set_virtualizer() {
 	sed -i '/#unix_sock_group = "libvirt"/s/#//' /etc/libvirt/libvirtd.conf
 	sed -i '/#unix_sock_rw_perms = "0770"/s/#//' /etc/libvirt/libvirtd.conf
-	usermod -a -G libvirt ${user_name}
+	usermod -aG libvirt ${user_name}
 }
 
 set_wallpaper() {
