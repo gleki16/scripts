@@ -509,7 +509,7 @@ install_gui_pkg() {
 	local driver_pkg=(${ucode_pkg[@]} ${gpu_pkg[@]} ${audio_pkg[@]} ${bluetooth_pkg[@]} ${touch_pkg[@]})
 	local manager_pkg=(networkmanager tlp)
 	local display_pkg=(wayland sway swaybg swayidle swaylock xorg-xwayland)
-	local desktop_pkg=(alacritty i3status-rust grim slurp wldash lm_sensors qt5-wayland)
+	local desktop_pkg=(alacritty i3status-rust grim slurp fuzzel lm_sensors qt5-wayland)
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(imv vlc)
 	local input_pkg=(fcitx5-im fcitx5-rime)
