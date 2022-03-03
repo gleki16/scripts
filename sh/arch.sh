@@ -597,6 +597,7 @@ write_config() {
 	set_tldr
 
 	if [ "$use_gui" = 1 ]; then
+		set_bluetooth
 		set_light
 		set_virtualizer
 		set_wallpaper
@@ -682,6 +683,10 @@ set_swap() {
 
 set_tldr() {
 	do_as_user tldr --update
+}
+
+set_bluetooth() {
+	usermod -aG lp ${user_name}
 }
 
 set_light() {
