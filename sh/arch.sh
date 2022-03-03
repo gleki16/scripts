@@ -508,7 +508,7 @@ install_gui_pkg() {
 
 	local driver_pkg=(${ucode_pkg[@]} ${gpu_pkg[@]} ${audio_pkg[@]} ${bluetooth_pkg[@]} ${touch_pkg[@]})
 	local manager_pkg=(networkmanager tlp)
-	local display_pkg=(wayland sway swaybg swayidle swaylock wl-clipboard xorg-xwayland)
+	local display_pkg=(wayland sway swayidle wallutils waylock wl-clipboard xorg-xwayland)
 	local desktop_pkg=(alacritty grim slurp lm_sensors mako qt5-wayland waybar wofi)
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(imv vlc)
