@@ -516,7 +516,7 @@ install_gui_pkg() {
 	local control_pkg=(light playerctl sddm)
 	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
 	local office_pkg=(calibre libreoffice-fresh-zh-cn)
-	local font_pkg=(noto-fonts-cjk noto-fonts-emoji ttf-font-awesome ttf-ubuntu-font-family)
+	local font_pkg=(noto-fonts-cjk noto-fonts-emoji otf-font-awesome ttf-ubuntu-font-family)
 
 	pacman_install ${driver_pkg[@]}  ${manager_pkg[@]}
 	pacman_install ${display_pkg[@]} ${desktop_pkg[@]}
