@@ -369,7 +369,7 @@ set_time_zone() {
 }
 
 set_locale() {
-	sed -i '/\(en_US\|zh_CN\).UTF-8/s/#//' /etc/locale.gen
+	sed -i '/#\(en_US\|zh_CN\).UTF-8/s/#//' /etc/locale.gen
 	locale-gen
 	echo "LANG=en_US.UTF-8" > /etc/locale.conf
 }
