@@ -289,7 +289,7 @@ set_subvol() {
 
 	umount -R /mnt
 
-	mount -o noatime,autodefrag,compress=zstd ${root_part} /mnt
+	mount -o noatime,autodefrag,compress=zstd,discard=async ${root_part} /mnt
 
 	for subvol in ${subvol_list[@]}; do
 		mkdir -p /mnt/${subvol}
