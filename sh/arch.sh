@@ -439,6 +439,8 @@ install_bootloader() {
 
 	if [ "$use_gui" = 1 ]; then
 		echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+		# 禁用看门狗定时器
+		sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/s/"$/ nowatchdog&/' /etc/default/grub
 	fi
 
 	grub-mkconfig -o /boot/grub/grub.cfg
