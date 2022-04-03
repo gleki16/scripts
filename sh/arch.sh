@@ -462,10 +462,10 @@ pacman_install() {
 
 install_pkg() {
 	local network_pkg=(aria2 curl git go-ipfs openssh wireguard-tools)
-	local terminal_pkg=(helix starship tmux zoxide)
+	local terminal_pkg=(helix starship zellij zoxide)
 	local file_pkg=(lf p7zip snapper snap-pac)
 	local sync_pkg=(chrony rsync)
-	local search_pkg=(fzf mlocate tree)
+	local search_pkg=(fzf mlocate)
 	local new_search_pkg=(fd ripgrep bat tealdeer exa)
 	local system_pkg=(fcron bottom man pacman-contrib pkgstats)
 	local maintain_pkg=(arch-install-scripts dosfstools parted)
