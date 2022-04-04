@@ -311,10 +311,6 @@ install_base_system() {
 
 	pacman -Sy --noconfirm archlinux-keyring
 
-	pacman -S --needed --noconfirm reflector
-	echo 'sorting mirrors ...'
-	reflector --latest 20 --protocol https --save /etc/pacman.d/mirrorlist --sort rate
-
 	pacstrap /mnt ${basic_pkg[@]}
 }
 
@@ -336,8 +332,6 @@ set_hostname() {
 
 change_root() {
 	local script_url="https://gitlab.com/glek/scripts/raw/main/sh/arch.sh"
-
-	rsync /etc/pacman.d/mirrorlist /mnt/etc/pacman.d
 
 	curl -fLo /mnt/arch.fish ${script_url}
 	chmod +x /mnt/arch.fish
