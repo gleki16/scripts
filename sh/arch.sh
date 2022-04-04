@@ -508,7 +508,7 @@ install_gui_pkg() {
 	local desktop_pkg=(alacritty grim slurp mako qt5-wayland waybar wofi)
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(imv vlc)
-	local input_pkg=(fcitx5-im fcitx5-rime)
+	local input_pkg=(fcitx5-im fcitx5-rime librime-sbxlm-git rime-sbxlm-sbkm)
 	local control_pkg=(light playerctl sddm udiskie)
 	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
 	local office_pkg=(foliate libreoffice-fresh-zh-cn)
@@ -533,10 +533,6 @@ copy_config() {
 	sync_cfg_dir etc /
 	sync_cfg_dir .config /root
 	sync_cfg_dir .config ${user_home}
-
-	if [ "$use_gui" = 1 ]; then
-		sync_cfg_dir .local ${user_home}
-	fi
 }
 
 do_as_user() {
@@ -594,6 +590,7 @@ write_config() {
 
 	if [ "$use_gui" = 1 ]; then
 		set_bluetooth
+		set_input
 		set_light
 		set_virtualizer
 		set_wallpaper
@@ -683,6 +680,15 @@ set_tldr() {
 
 set_bluetooth() {
 	usermod -aG lp ${user_name}
+}
+
+set_input() {
+	do_as_user sbxlm-init
+	cat << EOF | do_as_user tee ${user_home}/.local/share/fcitx5/rime/default.custom.yaml
+patch:
+ schema_list:
+  - {schema: sbkm} # 声笔快码
+EOF
 }
 
 set_light() {
