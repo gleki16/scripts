@@ -604,8 +604,12 @@ no_gui_set() {
 
 	cat << EOF > ${home_dir}/.config/fish/config.fish
 if status is-interactive
-	starship init fish | source
-	zoxide init fish | source
+	if test -n "\$SSH_TTY" -a -z "\$ZELLIJ"
+		exec zellij attach --create 0
+	else
+		starship init fish | source
+		zoxide init fish | source
+	end
 end
 EOF
 }
