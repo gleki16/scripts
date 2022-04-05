@@ -578,7 +578,7 @@ sync_cfg_dir() {
 }
 
 write_config() {
-	no_gui_set /root
+	user_root_set
 
 	set_cron
 	set_ipfs
@@ -594,22 +594,14 @@ write_config() {
 		set_light
 		set_virtualizer
 		set_wallpaper
-	else
-		no_gui_set ${user_home}
 	fi
 }
 
-no_gui_set() {
-	local home_dir="$1"
-
-	cat << EOF > ${home_dir}/.config/fish/config.fish
+user_root_set() {
+	cat << EOF > /root/.config/fish/config.fish
 if status is-interactive
-	if test -n "\$SSH_TTY" -a -z "\$ZELLIJ"
-		exec zellij attach --create 0
-	else
-		starship init fish | source
-		zoxide init fish | source
-	end
+	starship init fish | source
+	zoxide init fish | source
 end
 EOF
 }
