@@ -99,12 +99,13 @@
 
 - (办公室套件) LibreOffice
 - (制作系统启动盘) Ventoy
-- (位图图像编辑器) GIMP
-- (矢量图形编辑器) Inkscape
+- (位图图像编辑) GIMP
+- (矢量图形编辑) Inkscape
+- (绘画软件) Krita
 - (三维动画制作) Blender
-- (视频转码器) HandBrake
-- (视频编辑器) Shotcut
-- (音频编辑器) Audacity
+- (视频转码) HandBrake
+- (视频编辑) Shotcut
+- (音频编辑) Audacity
 
 硬件。
 
