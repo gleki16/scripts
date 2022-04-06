@@ -1,18 +1,14 @@
-if [ "$1" = "in" ]; then
-	sudo pacman -S --noconfirm matrix-synapse postgresql python-psycopg2
+sudo pacman -S --noconfirm matrix-synapse postgresql python-psycopg2
 
-	# 不升级数据库
-	sudo sed -i '/#IgnorePkg/s/#//' /etc/pacman.conf
-	if ! grep -q 'postgresql' /etc/pacman.conf; then
-		sudo sed -i '/IgnorePkg   =/s/IgnorePkg   =/& postgresql postgresql-libs/' /etc/pacman.conf
-	fi
-
-	# 初始化数据库
-	sudo -u postgres initdb --locale=en_US.UTF-8 -E UTF8 -D /var/lib/postgres/data
-	sudo systemctl enable postgresql
-
-	exit 0
+# 不升级数据库
+sudo sed -i '/#IgnorePkg/s/#//' /etc/pacman.conf
+if ! grep -q 'postgresql' /etc/pacman.conf; then
+	sudo sed -i '/IgnorePkg   =/s/IgnorePkg   =/& postgresql postgresql-libs/' /etc/pacman.conf
 fi
+
+# 初始化数据库
+sudo -u postgres initdb --locale=en_US.UTF-8 -E UTF8 -D /var/lib/postgres/data
+sudo systemctl enable --now postgresql
 
 echo "设定数据库的用户口令："
 sudo -u postgres createuser --pwprompt synapse

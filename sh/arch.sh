@@ -75,18 +75,20 @@ parse_arguments() {
 usage() {
 	local exit_code="$1"
 
-	echo "Syntax: arch.sh [options] command"
-	echo ""
-	echo "Quick install arch."
-	echo ""
-	echo "Commands:"
-	echo "    config    (co)              Copy config"
-	echo "    install   (in)              Install basic pkg"
-	echo "    ssh       (ss)              Open ssh service."
-	echo "    wifi      (wi)              Connect to a wifi."
-	echo ""
-	echo "Options:"
-	echo "    -h, --help                  Print this help message"
+	echo -e "${g}arch.sh${h} 0.1.0"
+	echo -e "    quick install arch"
+	echo -e ""
+	echo -e "${y}usage:${h}"
+	echo -e "    arch.sh [options] [command]"
+	echo -e ""
+	echo -e "${y}commands:${h}"
+	echo -e "    ${g}co${h}, ${g}config${h}              copy config"
+	echo -e "    ${g}in${h}, ${g}install${h}             install basic pkg"
+	echo -e "    ${g}ss${h}, ${g}ssh${h}                 open ssh service"
+	echo -e "    ${g}wi${h}, ${g}wifi${h}                connect to a wifi"
+	echo -e ""
+	echo -e "${y}options:${h}"
+	echo -e "    ${g}-h${h}, ${g}--help${h}              print this help message"
 
 	exit ${exit_code}
 }
@@ -742,9 +744,9 @@ check_root_permission() {
 }
 
 error() {
-	local wrong_reason="$@"
+	local wrong_reason="$*"
 
-	echo -e "${r}error: ${h}${wrong_reason}"
+	echo -e "${r}error:${h} ${wrong_reason}"
 	exit 1
 }
 
