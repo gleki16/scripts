@@ -106,6 +106,7 @@
 - (视频转码) HandBrake
 - (视频编辑) Shotcut
 - (音频编辑) Audacity
+- (游戏引擎) Godot
 
 硬件。
 
