@@ -46,7 +46,7 @@ usage() {
 	local exit_code="$1"
 
 	echo -e "${g}termux.sh${h} 0.1.0"
-	echo -e "    install basic pkg and config"
+	echo -e "install basic pkg and config"
 	echo -e ""
 	echo -e "${y}usage:${h}"
 	echo -e "    termux.sh [options] [subcommand]"

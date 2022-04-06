@@ -76,7 +76,7 @@ usage() {
 	local exit_code="$1"
 
 	echo -e "${g}arch.sh${h} 0.1.0"
-	echo -e "    quick install arch"
+	echo -e "quick install arch"
 	echo -e ""
 	echo -e "${y}usage:${h}"
 	echo -e "    arch.sh [options] [subcommand]"
