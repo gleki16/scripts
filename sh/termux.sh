@@ -49,7 +49,7 @@ usage() {
 	echo -e "    install basic pkg and config"
 	echo -e ""
 	echo -e "${y}usage:${h}"
-	echo -e "    termux.sh [options] [command]"
+	echo -e "    termux.sh [options] [subcommand]"
 	echo -e ""
 	echo -e "${y}commands:${h}"
 	echo -e "    ${g}co${h}, ${g}config${h}              copy config"

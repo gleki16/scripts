@@ -79,7 +79,7 @@ usage() {
 	echo -e "    quick install arch"
 	echo -e ""
 	echo -e "${y}usage:${h}"
-	echo -e "    arch.sh [options] [command]"
+	echo -e "    arch.sh [options] [subcommand]"
 	echo -e ""
 	echo -e "${y}commands:${h}"
 	echo -e "    ${g}co${h}, ${g}config${h}              copy config"
