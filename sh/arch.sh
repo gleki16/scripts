@@ -81,14 +81,14 @@ usage() {
 	echo -e "${y}usage:${h}"
 	echo -e "    arch.sh [options] [subcommand]"
 	echo -e ""
-	echo -e "${y}commands:${h}"
+	echo -e "${y}options:${h}"
+	echo -e "    ${g}-h${h}, ${g}--help${h}              print this help message"
+	echo -e ""
+	echo -e "${y}subcommands:${h}"
 	echo -e "    ${g}co${h}, ${g}config${h}              copy config"
 	echo -e "    ${g}in${h}, ${g}install${h}             install basic pkg"
 	echo -e "    ${g}ss${h}, ${g}ssh${h}                 open ssh service"
 	echo -e "    ${g}wi${h}, ${g}wifi${h}                connect to a wifi"
-	echo -e ""
-	echo -e "${y}options:${h}"
-	echo -e "    ${g}-h${h}, ${g}--help${h}              print this help message"
 
 	exit ${exit_code}
 }

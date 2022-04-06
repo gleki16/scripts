@@ -51,12 +51,12 @@ usage() {
 	echo -e "${y}usage:${h}"
 	echo -e "    termux.sh [options] [subcommand]"
 	echo -e ""
-	echo -e "${y}commands:${h}"
-	echo -e "    ${g}co${h}, ${g}config${h}              copy config"
-	echo -e "    ${g}in${h}, ${g}install${h}             install basic pkg"
-	echo -e ""
 	echo -e "${y}options:${h}"
 	echo -e "    ${g}-h${h}, ${g}--help${h}              print this help message"
+	echo -e ""
+	echo -e "${y}subcommands:${h}"
+	echo -e "    ${g}co${h}, ${g}config${h}              copy config"
+	echo -e "    ${g}in${h}, ${g}install${h}             install basic pkg"
 
 	exit ${exit_code}
 }
