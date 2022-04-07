@@ -75,20 +75,28 @@ parse_arguments() {
 usage() {
 	local exit_code="$1"
 
-	echo -e "${g}arch.sh${h} 0.1.0"
+	echo -e "${g}arch.sh${e} 0.1.0"
 	echo -e "quick install arch"
 	echo -e ""
-	echo -e "${y}usage:${h}"
+	echo -e "${y}usage:${e}"
 	echo -e "    arch.sh [options] [subcommand]"
 	echo -e ""
-	echo -e "${y}options:${h}"
-	echo -e "    ${g}-h${h}, ${g}--help${h}              print this help message"
+	echo -e "${y}options:${e}"
+	echo -e "    ${g}-h${e}, ${g}--help${e}"
+	echo -e "        print this help message"
 	echo -e ""
-	echo -e "${y}subcommands:${h}"
-	echo -e "    ${g}co${h}, ${g}config${h}              copy config"
-	echo -e "    ${g}in${h}, ${g}install${h}             install basic pkg"
-	echo -e "    ${g}ss${h}, ${g}ssh${h}                 open ssh service"
-	echo -e "    ${g}wi${h}, ${g}wifi${h}                connect to a wifi"
+	echo -e "${y}subcommands:${e}"
+	echo -e "    ${g}co${e}, ${g}config${e}"
+	echo -e "        copy config"
+	echo -e ""
+	echo -e "    ${g}in${e}, ${g}install${e}"
+	echo -e "        install basic pkg"
+	echo -e ""
+	echo -e "    ${g}ss${e}, ${g}ssh${e}"
+	echo -e "        open ssh service"
+	echo -e ""
+	echo -e "    ${g}wi${e}, ${g}wifi${e}"
+	echo -e "        connect to a wifi"
 
 	exit ${exit_code}
 }
@@ -137,8 +145,8 @@ open_ssh() {
 	echo "${USER}:${user_pass}" | chpasswd
 	systemctl start sshd
 
-	echo -e "${g}# ssh ${USER}@${ip}${h}"
-	echo -e "${g}passwd = ${user_pass}${h}"
+	echo -e "${g}# ssh ${USER}@${ip}${e}"
+	echo -e "${g}passwd = ${user_pass}${e}"
 }
 
 read_only_format() {
@@ -154,7 +162,7 @@ read_only_format() {
 				break
 			fi
 		else
-			echo -e "${r}wrong format.${h}"
+			echo -e "${r}wrong format.${e}"
 		fi
 	done
 
@@ -163,7 +171,7 @@ read_only_format() {
 
 check_network() {
 	if ping -c 1 -w 1 1.1.1.1 &>/dev/null; then
-		echo -e "${g}network connection is successful.${h}"
+		echo -e "${g}network connection is successful.${e}"
 	else
 		error "Network connection failed."
 	fi
@@ -200,7 +208,7 @@ use_gui_or_not() {
 }
 
 set_partition() {
-	echo -e "${r}automatic partition or manual partition: ${h}"
+	echo -e "${r}automatic partition or manual partition: ${e}"
 	sel ans "automatic" "manual"
 
 	if [ "$ans" = "automatic" ]; then
@@ -241,7 +249,7 @@ select_partition() {
 	local partition_list=($(lsblk -lno NAME | grep '^\(nvme\|sd.\|vd.\)'))
 
 	lsblk -o NAME,SIZE
-	echo -e "${r}select a partition as the ${h}${partition_name}${r} partition:${h}"
+	echo -e "${r}select a partition as the ${e}${partition_name}${r} partition:${e}"
 
 	sel part ${partition_list[@]}
 	eval ${partition_name}="/dev/${part}"
@@ -345,7 +353,7 @@ change_root() {
 
 	umount -R /mnt
 
-	echo -e "${r}please reboot.${h}"
+	echo -e "${r}please reboot.${e}"
 }
 
 set_resolve() {
@@ -746,7 +754,7 @@ check_root_permission() {
 error() {
 	local wrong_reason="$*"
 
-	echo -e "${r}error:${h} ${wrong_reason}"
+	echo -e "${r}error:${e} ${wrong_reason}"
 	exit 1
 }
 
@@ -758,7 +766,7 @@ color() {
 	p="\033[35m" # 紫
 	c="\033[36m" # 青
 	w="\033[37m" # 白
-	h="\033[0m"  # 后缀
+	e="\033[0m"  # 后缀
 }
 
 main "$@"

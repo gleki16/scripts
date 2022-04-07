@@ -45,18 +45,22 @@ parse_arguments() {
 usage() {
 	local exit_code="$1"
 
-	echo -e "${g}termux.sh${h} 0.1.0"
+	echo -e "${g}termux.sh${e} 0.1.0"
 	echo -e "install basic pkg and config"
 	echo -e ""
-	echo -e "${y}usage:${h}"
+	echo -e "${y}usage:${e}"
 	echo -e "    termux.sh [options] [subcommand]"
 	echo -e ""
-	echo -e "${y}options:${h}"
-	echo -e "    ${g}-h${h}, ${g}--help${h}              print this help message"
+	echo -e "${y}options:${e}"
+	echo -e "    ${g}-h${e}, ${g}--help${e}"
+	echo -e "        print this help message"
 	echo -e ""
-	echo -e "${y}subcommands:${h}"
-	echo -e "    ${g}co${h}, ${g}config${h}              copy config"
-	echo -e "    ${g}in${h}, ${g}install${h}             install basic pkg"
+	echo -e "${y}subcommands:${e}"
+	echo -e "    ${g}co${e}, ${g}config${e}"
+	echo -e "        copy config"
+	echo -e ""
+	echo -e "    ${g}in${e}, ${g}install${e}"
+	echo -e "        install basic pkg"
 
 	exit ${exit_code}
 }
@@ -129,7 +133,7 @@ EOF
 error() {
 	local wrong_reason="$*"
 
-	echo -e "${r}error:${h} ${wrong_reason}"
+	echo -e "${r}error:${e} ${wrong_reason}"
 	exit 1
 }
 
@@ -141,7 +145,7 @@ color() {
 	p="\033[35m" # 紫
 	c="\033[36m" # 青
 	w="\033[37m" # 白
-	h="\033[0m"  # 后缀
+	e="\033[0m"  # 后缀
 }
 
 main "$@"
