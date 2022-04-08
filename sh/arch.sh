@@ -343,13 +343,13 @@ set_hostname() {
 change_root() {
 	local script_url="https://gitlab.com/glek/scripts/raw/main/sh/arch.sh"
 
-	curl -fLo /mnt/arch.fish ${script_url}
-	chmod +x /mnt/arch.fish
+	curl -fLo /mnt/arch.sh ${script_url}
+	chmod +x /mnt/arch.sh
 
-	arch-chroot /mnt /arch.fish --in-chroot "$user_name" "$user_pass" "$use_gui"
+	arch-chroot /mnt /arch.sh --in-chroot "$user_name" "$user_pass" "$use_gui"
 
 	set_resolve
-	rm /mnt/arch.fish
+	rm /mnt/arch.sh
 
 	umount -R /mnt
 
@@ -466,7 +466,7 @@ pacman_install() {
 
 install_pkg() {
 	local network_pkg=(aria2 curl git go-ipfs openssh wireguard-tools)
-	local terminal_pkg=(helix starship zellij zoxide)
+	local terminal_pkg=(helix starship zellij zoxide zsh)
 	local file_pkg=(lf p7zip snapper snap-pac)
 	local sync_pkg=(chrony rsync)
 	local search_pkg=(fzf mlocate)
@@ -474,7 +474,7 @@ install_pkg() {
 	local system_pkg=(fcron bottom man pacman-contrib pkgstats)
 	local maintain_pkg=(arch-install-scripts dosfstools parted)
 	local security_pkg=(dnscrypt-proxy gocryptfs nftables)
-	local depend_pkg=(perl-file-mimeinfo qrencode zsh)
+	local depend_pkg=(perl-file-mimeinfo qrencode)
 	local aur_pkg=(paru)
 
 	pacman_install ${network_pkg[@]}  ${terminal_pkg[@]}
@@ -588,8 +588,6 @@ sync_cfg_dir() {
 }
 
 write_config() {
-	user_root_set
-
 	set_cron
 	set_ipfs
 	set_shell
@@ -605,15 +603,6 @@ write_config() {
 		set_virtualizer
 		set_wallpaper
 	fi
-}
-
-user_root_set() {
-	cat << EOF > /root/.config/fish/config.fish
-if status is-interactive
-	starship init fish | source
-	zoxide init fish | source
-end
-EOF
 }
 
 set_cron() {
@@ -632,7 +621,7 @@ set_ipfs() {
 }
 
 set_shell() {
-	sed -i '/home\|root/s/bash/fish/' /etc/passwd
+	sed -i '/home\|root/s/bash/zsh/' /etc/passwd
 }
 
 set_snapper() {
