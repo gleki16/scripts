@@ -474,7 +474,7 @@ install_pkg() {
 	local system_pkg=(fcron bottom man pacman-contrib pkgstats)
 	local maintain_pkg=(arch-install-scripts dosfstools parted)
 	local security_pkg=(dnscrypt-proxy gocryptfs nftables)
-	local depend_pkg=(perl-file-mimeinfo qrencode)
+	local depend_pkg=(qrencode)
 	local aur_pkg=(paru)
 
 	pacman_install ${network_pkg[@]}  ${terminal_pkg[@]}
