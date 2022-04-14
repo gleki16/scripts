@@ -624,7 +624,6 @@ set_shell() {
 	sed -i '/home\|root/s/bash/zsh/' /etc/passwd
 
 	echo "# 如果没有 .zshrc，zsh 会要你新建一个" > ${user_home}/.zshrc
-	echo "# 如果没有 .zshrc，zsh 会要你新建一个" > /root/.zshrc
 }
 
 set_snapper() {
