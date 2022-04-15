@@ -40,13 +40,13 @@
 1. daniwell - UZ
 1. daniwell - 夏の终わりの彼女は
 1. supercell - My Dearest
-1. 清漪 - 但叹清风错
-1. 甘茶の音楽工房 - 赤い风船とメリーゴーランド
 1. EGOIST - The Everlasting Guilty Crown
+1. SOUNDORBIS - LIFE
+1. 清漪 - 但叹清风错
+1. himmel - 远枫
+1. 甘茶の音楽工房 - 赤い风船とメリーゴーランド
 1. いとうかなこ - アマデウス
 1. GALA - 追梦赤子心
-1. SOUNDORBIS - LIFE
-1. himmel - 远枫
 1. H-el-ical／／ - Altern-ate-
 1. Poppin'Party - Returns
 1. 大橋彩香 - 気まぐれロマンティック
@@ -57,19 +57,17 @@
 1. 去月球
 1. 寻找天堂
 1. 影子工厂
-1. supertux
-1. 艾诺迪亚4
-1. 侠盗猎车手圣安地列斯
+1. 我在七年后等着你
+1. 爱丽斯的精神审判
 1. The Room 迷室系列
 1. 命运石之门
-1. 爱丽斯的精神审判
 1. 四目神
-1. 我在七年后等着你
-1. 刺激战场
 1. BanG Dream! 少女乐团派对
-1. DDLC 心跳文学部
+1. 艾诺迪亚4
+1. supertux
 1. 泰坦天降2
-1. seven days with the ghost
+1. 刺激战场
+1. 侠盗猎车手圣安地列斯
 
 ### 软件
 
