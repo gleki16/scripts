@@ -1,8 +1,6 @@
 # UZ
 
-<p align="center">
-  <img src="img/PopTartCat.gif" alt="Nyan Cat">
-</p>
+![Nyan Cat](img/PopTartCat.gif)
 
 
 ## 神作
