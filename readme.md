@@ -94,30 +94,36 @@
 
 ### 不常用的软件
 
-- (办公室套件) LibreOffice
-- (制作系统启动盘) Ventoy
-- (位图图像编辑) GIMP
-- (矢量图形编辑) Inkscape
-- (绘画软件) Krita
-- (三维动画制作) Blender
-- (视频转码) HandBrake
-- (视频编辑) Shotcut
-- (音频编辑) Audacity
-- (游戏引擎) Godot
+| 领域 | 软件 |
+| --- | --- |
+| 办公室套件 | LibreOffice |
+| 制作系统启动盘 | Ventoy |
+| 位图图像编辑 | GIMP |
+| 矢量图形编辑 | Inkscape |
+| 绘画软件 | Krita |
+| 三维动画制作 | Blender |
+| 视频转码 | HandBrake |
+| 视频编辑 | Shotcut |
+| 音频编辑 | Audacity |
+| 游戏引擎 | Godot |
 
 ### 硬件
 
-- (键盘) X-Bows Lite
-- (轨迹球) Kensington Pro Fit Ergo
-- (耳机) 韶音 AS800
-- (闪存盘) Lexar JumpDrive M45
-- (工学椅) Humanscale Freedom Headrest
+| 领域 | 硬件 |
+| --- | --- |
+| 键盘 | X-Bows Lite |
+| 轨迹球 | Kensington Pro Fit Ergo |
+| 耳机 | 韶音 AS800 |
+| 闪存盘 | Lexar JumpDrive M45 |
+| 工学椅 | Humanscale Freedom Headrest |
 
 ### 日常携带
 
-- (手机) 华为 Mate 30 Pro 5G
-- (智能手环) 华为 Watch Fit
-- (折叠爪刀) FX-599-XTS
+| 领域 | 物品 |
+| --- | --- |
+| 手机 | 华为 Mate 30 Pro 5G |
+| 智能手环 | 华为 Watch Fit |
+| 折叠爪刀 | FX-599-XTS |
 
 
 ## 解释 ##
@@ -126,7 +132,7 @@
 
 daniwell
 
-cdhsmcq 彩虹猫
+彩虹猫
 [W](http://www.nyan.cat/)
 [W](https://www.webcitation.org/6AX4J3pMz?url=http://www.prguitarman.com/index.php?id=348)
 [W](https://www.youtube.com/watch?v=QH2-TGUlwu4)
