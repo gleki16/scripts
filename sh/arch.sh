@@ -173,7 +173,7 @@ read_only_format() {
 }
 
 check_network() {
-	if ping -c 1 -w 1 1.1.1.1 &>/dev/null; then
+	if ping -c 1 -w 1 1.1.1.1 &> /dev/null; then
 		echo -e "${g}network connection is successful.${e}"
 	else
 		error "Network connection failed."
@@ -740,7 +740,7 @@ check_root_permission() {
 error() {
 	local wrong_reason="$*"
 
-	echo -e "${r}error:${e} ${wrong_reason}"
+	echo -e "${r}error:${e} ${wrong_reason}" >&2
 	exit 1
 }
 
