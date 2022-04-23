@@ -133,7 +133,8 @@ connect_wifi() {
 
 	iwctl station ${iw_dev} scan
 	iwctl station ${iw_dev} get-networks
-	read -p "wifi name you want to connect to: " ssid
+	echo -ne "${y}read: ${e}wifi name you want to connect to: "
+	read ssid
 	iwctl station ${iw_dev} connect "${ssid}"
 }
 
@@ -155,9 +156,11 @@ read_only_format() {
 	local matching_format="$3"
 
 	while true; do
-		read -p "$output_hint " ans
-		if echo "$ans" | grep -q "$matching_format"; then
-			read -p "${ans}, are you sure? " sure
+		echo -ne "${y}read: ${e}$output_hint "
+		read reply
+		if echo "$reply" | grep -q "$matching_format"; then
+			echo -ne "${y}read: ${e}${reply}, are you sure? "
+			read sure
 			if [ "$sure" = 'y' -o "$sure" = '' ]; then
 				break
 			fi
@@ -166,7 +169,7 @@ read_only_format() {
 		fi
 	done
 
-	eval ${var_name_to_be_set}="$ans"
+	eval ${var_name_to_be_set}="$reply"
 }
 
 check_network() {
@@ -188,9 +191,10 @@ enter_user_var() {
 }
 
 use_gui_or_not() {
-	read -p "use GUI or not? " ans
+	echo -ne "${y}read: ${e}use GUI or not? "
+	read reply
 
-	case "$ans" in
+	case "$reply" in
 		y)
 			use_gui=1
 			;;
@@ -209,9 +213,9 @@ use_gui_or_not() {
 
 set_partition() {
 	echo -e "${r}automatic partition or manual partition: ${e}"
-	sel ans "automatic" "manual"
+	sel reply "automatic" "manual"
 
-	if [ "$ans" = "automatic" ]; then
+	if [ "$reply" = "automatic" ]; then
 		select_partition main_part
 
 		parted -s ${main_part} mklabel gpt
@@ -262,7 +266,8 @@ sel() {
 
 	select option in ${option_list[@]}; do
 		if [ "$option" != "" ] && [[ "${option_list[@]}" =~ "$option"  ]]; then
-			read -p "${option}, are you sure? " sure
+			echo -ne "${y}read: ${e}${option}, are you sure? "
+			read sure
 			if [ "$sure" = 'y' -o "$sure" = '' ]; then
 				break
 			fi
