@@ -630,6 +630,7 @@ set_ipfs() {
 set_shell() {
 	sed -i '/home\|root/s/bash/zsh/' /etc/passwd
 
+	rm ${user_home}/.bash*
 	echo "# 如果没有 .zshrc，zsh 会要你新建一个" > ${user_home}/.zshrc
 }
 
