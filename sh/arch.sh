@@ -136,7 +136,7 @@ connect_wifi() {
 
 	iwctl station ${iw_dev} scan
 	iwctl station ${iw_dev} get-networks
-	echo -ne "${y}read: ${e}wifi name you want to connect to: "
+	echo -ne "${y}read:${e} wifi name you want to connect to: "
 	read ssid
 	iwctl station ${iw_dev} connect "${ssid}"
 }
@@ -159,10 +159,10 @@ read_only_format() {
 	local matching_format="$3"
 
 	while true; do
-		echo -ne "${y}read: ${e}$output_hint "
+		echo -ne "${y}read:${e} ${output_hint} "
 		read reply
 		if echo "$reply" | grep -q "$matching_format"; then
-			echo -ne "${y}read: ${e}${reply}, are you sure? "
+			echo -ne "${y}sure:${e} ${reply}, are you sure? "
 			read sure
 			if [ "$sure" = 'y' -o "$sure" = '' ]; then
 				break
@@ -194,10 +194,10 @@ enter_user_var() {
 }
 
 use_gui_or_not() {
-	echo -ne "${y}read: ${e}use GUI or not? "
-	read reply
+	echo -ne "${y}sure:${e} use GUI or not? "
+	read sure
 
-	case "$reply" in
+	case "$sure" in
 		y)
 			use_gui=1
 			;;
@@ -215,8 +215,7 @@ use_gui_or_not() {
 }
 
 set_partition() {
-	echo -e "${r}automatic partition or manual partition: ${e}"
-	sel reply "automatic" "manual"
+	sel reply "automatic partition or manual partition" "automatic" "manual"
 
 	if [ "$reply" = "automatic" ]; then
 		select_partition main_part
@@ -256,20 +255,21 @@ select_partition() {
 	local partition_list=($(lsblk -lno NAME | grep '^\(nvme\|sd.\|vd.\)'))
 
 	lsblk -o NAME,SIZE
-	echo -e "${r}select a partition as the ${e}${partition_name}${r} partition:${e}"
 
-	sel part ${partition_list[@]}
+	sel part "select a partition as the ${y}${partition_name}${e} partition" ${partition_list[@]}
 	eval ${partition_name}="/dev/${part}"
 }
 
 sel() {
 	local var_name_to_be_set="$1"
-	shift
+	local output_hint="$2"
+	shift 2
 	local option_list=($@)
 
+	echo -e "${y}sele:${e} ${output_hint}:"
 	select option in ${option_list[@]}; do
 		if [ "$option" != "" ] && [[ "${option_list[@]}" =~ "$option"  ]]; then
-			echo -ne "${y}read: ${e}${option}, are you sure? "
+			echo -ne "${y}sure:${e} ${option}, are you sure? "
 			read sure
 			if [ "$sure" = 'y' -o "$sure" = '' ]; then
 				break
@@ -361,7 +361,7 @@ change_root() {
 
 	umount -R /mnt
 
-	echo -e "${r}please reboot.${e}"
+	echo -e "${y}please reboot.${e}"
 }
 
 set_resolve() {
