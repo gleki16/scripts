@@ -34,6 +34,9 @@ parse_arguments() {
 			-h | --help)
 				usage 0
 				;;
+			--)
+				break
+				;;
 			*)
 				usage 1
 				;;
