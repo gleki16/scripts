@@ -711,7 +711,7 @@ set_auto_start() {
 	if [ "$use_gui" = 1 ]; then
 		# dhcpcd 和 NetworkManager 不能同时启动
 		disable_list+=(dhcpcd)
-		enable_list+=(bluetooth libvirtd NetworkManager sddm tlp)
+		enable_list+=(bluetooth libvirtd NetworkManager reflector.timer sddm tlp)
 	else
 		enable_list+=(dhcpcd)
 	fi
