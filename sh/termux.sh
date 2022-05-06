@@ -91,8 +91,8 @@ change_source() {
 
 install_pkg() {
 	local base_pkg=(curl git openssh rsync)
-	local shell_pkg=(fish lf helix starship zoxide)
-	local other_pkg=(bat man tree wget zsh)
+	local shell_pkg=(fish ranger helix starship zoxide)
+	local other_pkg=(bat exa man zsh)
 
 	pkg upgrade -y
 	pkg install -y ${base_pkg[@]} ${shell_pkg[@]} ${other_pkg[@]}
@@ -122,13 +122,6 @@ copy_config() {
 
 write_config() {
 	chsh -s fish
-
-	cat << EOF > $HOME/.config/fish/config.fish
-if status is-interactive
-	starship init fish | source
-	zoxide init fish | source
-end
-EOF
 
 	curl -fLo $HOME/.termux/font.ttf --create-dirs https://github.com/powerline/fonts/raw/master/UbuntuMono/Ubuntu%20Mono%20derivative%20Powerline.ttf
 }
