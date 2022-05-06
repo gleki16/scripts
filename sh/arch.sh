@@ -610,6 +610,7 @@ write_config() {
 	if [ "$use_gui" = 1 ]; then
 		set_bluetooth
 		set_light
+		set_sddm
 		set_virtualizer
 		set_wallpaper
 	fi
@@ -693,6 +694,13 @@ set_bluetooth() {
 
 set_light() {
 	usermod -aG video ${user_name}
+}
+
+set_sddm() {
+	cat << EOF > /var/lib/sddm/state.conf
+[Last]
+Session=/usr/share/xsessions/qtile.desktop
+EOF
 }
 
 set_virtualizer() {
