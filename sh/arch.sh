@@ -475,7 +475,7 @@ pacman_install() {
 install_pkg() {
 	local network_pkg=(aria2 curl git go-ipfs openssh wireguard-tools)
 	local terminal_pkg=(helix starship zellij zoxide zsh)
-	local file_pkg=(lf p7zip snapper snap-pac)
+	local file_pkg=(ranger p7zip snapper snap-pac)
 	local sync_pkg=(chrony rsync)
 	local search_pkg=(fzf mlocate)
 	local new_search_pkg=(fd ripgrep bat tealdeer exa)
@@ -522,18 +522,21 @@ install_gui_pkg() {
 
 	local driver_pkg=(${ucode_pkg[@]} ${gpu_pkg[@]} ${audio_pkg[@]} ${bluetooth_pkg[@]} ${touch_pkg[@]})
 	local manager_pkg=(networkmanager tlp)
-	local display_pkg=(wayland sway swayidle waylock wl-clipboard xorg-xwayland)
-	local desktop_pkg=(alacritty grim slurp mako qt5-wayland waybar wofi)
+	local wayland_display_pkg=(wayland sway swayidle waylock wl-clipboard xorg-xwayland)
+	local wayland_desktop_pkg=(grim slurp mako qt5-wayland waybar wofi)
+	local xorg_display_pkg=(xorg xorg-xinit picom qtile slock xclip)
+	local xorg_desktop_pkg=(dunst feh flameshot rofi)
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(imv vlc)
 	local input_pkg=(fcitx5-im fcitx5-chinese-addons)
-	local control_pkg=(light playerctl sddm udiskie)
+	local control_pkg=(alacritty light playerctl sddm udiskie)
 	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
 	local office_pkg=(foliate libreoffice-fresh-zh-cn)
 	local font_pkg=(noto-fonts-cjk noto-fonts-emoji otf-font-awesome ttf-ubuntu-font-family)
 
 	pacman_install ${driver_pkg[@]}  ${manager_pkg[@]}
-	pacman_install ${display_pkg[@]} ${desktop_pkg[@]}
+	pacman_install ${wayland_display_pkg[@]} ${wayland_desktop_pkg[@]}
+	pacman_install ${xorg_display_pkg[@]}    ${xorg_desktop_pkg[@]}
 	pacman_install ${browser_pkg[@]} ${media_pkg[@]}
 	pacman_install ${input_pkg[@]}   ${control_pkg[@]}
 	pacman_install ${virtual_pkg[@]} ${office_pkg[@]}
