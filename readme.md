@@ -97,7 +97,7 @@
 | 安卓音乐播放器 | Vinyl Music Player |
 | 安卓终端 | Termux |
 | 文档编辑器 | helix |
-| 文件管理器 | lf |
+| 文件管理器 | ranger |
 | 即时通信 | matrix |
 
 ### 不常用的软件
