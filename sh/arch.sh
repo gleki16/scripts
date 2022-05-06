@@ -600,7 +600,6 @@ sync_cfg_dir() {
 
 write_config() {
 	set_cron
-	set_dnscrypt
 	set_ipfs
 	set_shell
 	set_snapper
@@ -625,10 +624,6 @@ set_cron() {
 	else
 		fcrontab ${cfg_dir}/cron
 	fi
-}
-
-set_dnscrypt() {
-	sed -i "/# server_names =/s/=.*/= ['cloudflare', 'cloudflare-ipv6']/" /etc/dnscrypt-proxy/dnscrypt.toml
 }
 
 set_ipfs() {
