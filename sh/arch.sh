@@ -521,7 +521,7 @@ install_gui_pkg() {
 	local touch_pkg=(libinput)
 
 	local driver_pkg=(${ucode_pkg[@]} ${gpu_pkg[@]} ${audio_pkg[@]} ${bluetooth_pkg[@]} ${touch_pkg[@]})
-	local manager_pkg=(networkmanager tlp)
+	local manager_pkg=(networkmanager network-manager-applet tlp)
 	local wayland_display_pkg=(wayland sway swayidle waylock wl-clipboard xorg-xwayland)
 	local wayland_desktop_pkg=(grim slurp mako qt5-wayland waybar wofi)
 	local xorg_display_pkg=(xorg xorg-xinit picom qtile slock xclip)
