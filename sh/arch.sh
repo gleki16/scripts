@@ -524,7 +524,7 @@ install_gui_pkg() {
 	local manager_pkg=(networkmanager network-manager-applet tlp)
 	local wayland_display_pkg=(wayland sway swayidle waylock wl-clipboard xorg-xwayland)
 	local wayland_desktop_pkg=(grim slurp mako qt5-wayland waybar wofi)
-	local xorg_display_pkg=(xorg xorg-xinit picom qtile slock xclip)
+	local xorg_display_pkg=(xorg xorg-xinit picom qtile python-pywlroots slock xclip)
 	local xorg_desktop_pkg=(dunst feh flameshot rofi)
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(ueberzug imv vlc)
