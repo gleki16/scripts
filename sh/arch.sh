@@ -527,7 +527,7 @@ install_gui_pkg() {
 	local xorg_display_pkg=(xorg xorg-xinit picom qtile python-pywlroots i3lock xclip)
 	local xorg_desktop_pkg=(dunst feh flameshot rofi)
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
-	local media_pkg=(ueberzug imv vlc)
+	local media_pkg=(ueberzug imv vlc adwaita-qt)
 	local input_pkg=(fcitx5-im fcitx5-chinese-addons fcitx5-nord)
 	local control_pkg=(alacritty light playerctl sddm udiskie)
 	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
