@@ -528,7 +528,7 @@ install_gui_pkg() {
 	local xorg_desktop_pkg=(dunst feh flameshot rofi)
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(ueberzug imv vlc)
-	local input_pkg=(fcitx5-im fcitx5-chinese-addons)
+	local input_pkg=(fcitx5-im fcitx5-chinese-addons fcitx5-nord)
 	local control_pkg=(alacritty light playerctl sddm udiskie)
 	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
 	local office_pkg=(foliate libreoffice-fresh-zh-cn)
