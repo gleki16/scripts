@@ -153,7 +153,7 @@ daniwell
 请先[安装 arch](arch.md)
 
 ```shell
-bash <(curl https://gitlab.com/glek/scripts/raw/main/sh/arch.sh)
+bash <(curl -L gitlab.com/glek/scripts/raw/main/sh/arch.sh)
 ```
 
 
@@ -162,12 +162,12 @@ bash <(curl https://gitlab.com/glek/scripts/raw/main/sh/arch.sh)
 请先[安装 arch](archv.md)
 
 ```shell
-bash <(curl https://gitlab.com/glek/scripts/raw/main/sh/arch.sh)
+bash <(curl -L gitlab.com/glek/scripts/raw/main/sh/arch.sh)
 ```
 
 
 ### Termux 配置 ###
 
 ```shell
-bash <(curl https://gitlab.com/glek/scripts/raw/main/sh/termux.sh)
+bash <(curl -L gitlab.com/glek/scripts/raw/main/sh/termux.sh)
 ```
