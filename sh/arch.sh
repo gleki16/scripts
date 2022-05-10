@@ -525,7 +525,7 @@ install_gui_pkg() {
 	local wayland_display_pkg=(wayland sway swayidle waylock wl-clipboard xorg-xwayland)
 	local wayland_desktop_pkg=(grim slurp mako qt5-wayland waybar wofi)
 	local xorg_display_pkg=(xorg xorg-xinit qtile python-pywlroots i3lock xclip)
-	local xorg_desktop_pkg=(dunst feh flameshot rofi)
+	local xorg_desktop_pkg=(dunst feh flameshot rofi redshift)
 	local browser_pkg=(firefox firefox-i18n-zh-cn)
 	local media_pkg=(ueberzug imv vlc)
 	local input_pkg=(fcitx5-im fcitx5-chinese-addons fcitx5-nord)
