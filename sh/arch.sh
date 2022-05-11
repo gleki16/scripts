@@ -215,6 +215,10 @@ use_gui_or_not() {
 }
 
 set_partition() {
+	if findmnt /mnt; then
+		umount -fR /mnt
+	fi
+
 	sel reply "automatic partition or manual partition" "automatic" "manual"
 
 	if [ "$reply" = "automatic" ]; then
@@ -282,10 +286,6 @@ sel() {
 
 set_subvol() {
 	local subvol_list=(.snapshots 'boot/grub' home opt root srv 'usr/local' var)
-
-	if findmnt /mnt; then
-		umount -fR /mnt
-	fi
 
 	mkfs.btrfs -fL arch ${root_part}
 	mount ${root_part} /mnt
