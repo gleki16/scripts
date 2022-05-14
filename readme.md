@@ -96,7 +96,7 @@
 | 安卓文件管理 | MiXplorer |
 | 安卓音乐播放器 | Vinyl Music Player |
 | 安卓终端 | Termux |
-| 文档编辑器 | helix |
+| 文档编辑器 | emacs |
 | 文件管理器 | ranger |
 | 即时通信 | matrix |
 
