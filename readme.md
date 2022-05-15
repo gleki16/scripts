@@ -172,3 +172,12 @@ bash <(curl -L gitlab.com/glek/scripts/raw/main/sh/arch.sh)
 ```shell
 bash <(curl -L gitlab.com/glek/scripts/raw/main/sh/termux.sh)
 ```
+
+
+### Windows 配置 ###
+
+```powershell
+# 允许运行脚本
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-WebRequest gitlab.com/glek/scripts/raw/main/sh/win.ps1 | Invoke-Expression
+```
