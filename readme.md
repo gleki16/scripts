@@ -177,7 +177,6 @@ bash <(curl -L gitlab.com/glek/scripts/raw/main/sh/termux.sh)
 ### Windows 配置 ###
 
 ```powershell
-# 允许运行脚本
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser # 允许运行脚本
 Invoke-WebRequest gitlab.com/glek/scripts/raw/main/sh/win.ps1 | Invoke-Expression
 ```
