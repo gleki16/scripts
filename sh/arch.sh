@@ -530,7 +530,7 @@ install_gui_pkg() {
 	local media_pkg=(ueberzug imv vlc)
 	local input_pkg=(fcitx5-im fcitx5-chinese-addons fcitx5-pinyin-zhwiki)
 	local control_pkg=(alacritty light playerctl sddm udiskie)
-	local virtual_pkg=(flatpak qemu libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
+	local virtual_pkg=(flatpak qemu-desktop libvirt virt-manager dnsmasq bridge-utils openbsd-netcat edk2-ovmf)
 	local office_pkg=(foliate libreoffice-fresh-zh-cn)
 	local font_pkg=(noto-fonts-cjk noto-fonts-emoji otf-font-awesome ttf-ubuntu-font-family)
 
