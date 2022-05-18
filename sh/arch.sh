@@ -325,7 +325,7 @@ set_subvol() {
 }
 
 install_base_system() {
-	local basic_pkg=(base base-devel linux linux-firmware btrfs-progs fish dhcpcd reflector vim)
+	local basic_pkg=(base base-devel linux linux-firmware btrfs-progs fish dhcpcd reflector neovim)
 
 	pacman -Sy --noconfirm archlinux-keyring
 
