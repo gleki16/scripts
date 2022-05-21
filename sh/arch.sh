@@ -478,7 +478,7 @@ install_pkg() {
 	local file_pkg=(ranger p7zip snapper snap-pac)
 	local sync_pkg=(chrony rsync)
 	local search_pkg=(fzf mlocate)
-	local new_search_pkg=(fd ripgrep bat tealdeer exa)
+	local new_search_pkg=(bat exa fd httpie ripgrep tealdeer)
 	local system_pkg=(fcron bottom man pacman-contrib pkgstats)
 	local maintain_pkg=(arch-install-scripts dosfstools parted)
 	local security_pkg=(dnscrypt-proxy gocryptfs nftables)
