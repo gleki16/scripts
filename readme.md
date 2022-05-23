@@ -99,7 +99,7 @@
 | 文档编辑器 | emacs |
 | 文件管理器 | ranger |
 | 即时通信 | matrix |
-| 微软包管理 | Scoop |
+| 微软包管理 | winget |
 
 ### 不常用的软件
 
