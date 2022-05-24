@@ -35,10 +35,7 @@ def main():
     a_ready_login.do(ready_login, start_hour, start_minute - 5)
 
 def test_login():
-    global driver
-    service = Service(log_path=path.devnull)
-    driver = WebDriver(service=service)
-    driver.implicitly_wait(5)
+    create_driver()
     driver.get(url)
     time.sleep(0.5)
 
@@ -52,10 +49,7 @@ def test_login():
     driver.quit()
 
 def ready_login():
-    global driver
-    service = Service(log_path=path.devnull)
-    driver = WebDriver(service=service)
-    driver.implicitly_wait(5)
+    create_driver()
     driver.get(url)
     time.sleep(0.5)
 
@@ -108,6 +102,12 @@ def login(driver):
         driver.quit()
         print('登录失败')
         exit(1)
+
+def create_driver():
+    global driver
+    service = Service(log_path=path.devnull)
+    driver = WebDriver(service=service)
+    driver.implicitly_wait(5)
 
 def alert_accept():
     global alert_text
