@@ -1,6 +1,8 @@
 from datetime import datetime
-from selenium import webdriver
+from os import path
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.webdriver import WebDriver
 from threading import Timer
 import time
 
@@ -34,7 +36,8 @@ def main():
 
 def test_login():
     global driver
-    driver = webdriver.Firefox()
+    service = Service(log_path=path.devnull)
+    driver = WebDriver(service=service)
     driver.implicitly_wait(5)
     driver.get(url)
     time.sleep(0.5)
@@ -50,7 +53,8 @@ def test_login():
 
 def ready_login():
     global driver
-    driver = webdriver.Firefox()
+    service = Service(log_path=path.devnull)
+    driver = WebDriver(service=service)
     driver.implicitly_wait(5)
     driver.get(url)
     time.sleep(0.5)
