@@ -710,8 +710,11 @@ set_virtualizer() {
 }
 
 set_wallpaper() {
-	do_as_user mkdir -p ${user_home}/a/pixra/bimple
-	sync_cfg_dir black.png ${user_home}/a/pixra/bimple/black.png
+	local wallpaper_dir='a/pixra/bimple'
+	local wallpaper_name='86094212_p0.png'
+
+	do_as_user mkdir -p ${user_home}/${wallpaper_dir}
+	sync_cfg_dir 86094212_p0.png ${user_home}/${wallpaper_dir}/${wallpaper_name}
 }
 
 set_auto_start() {
