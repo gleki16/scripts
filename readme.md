@@ -86,6 +86,7 @@
 | 领域 | 软件 |
 | --- | --- |
 | 语言 | Lojban 逻辑语 |
+| 编程语言 | lisp |
 | 操作系统 | Arch Linux |
 | 文件系统 | Btrfs |
 | 英文字体 | Ubuntu font |
