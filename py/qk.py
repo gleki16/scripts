@@ -78,6 +78,9 @@ def grab_lesson():
         except:
             break
 
+    driver.find_element(By.ID, logout_btn).click()
+    driver.quit()
+
     print('程序结束')
 
 class alarm:
