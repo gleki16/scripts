@@ -133,7 +133,8 @@
 | --- | --- |
 | 手机 | 华为 Mate 30 Pro 5G |
 | 智能手环 | 华为 Watch Fit |
-| 折叠爪刀 | FX-599-XTS |
+| 机械爪刀 | CRKT Provoke |
+| 直跳刀 | Microtech Ultratech |
 
 
 ## 解释 ##
