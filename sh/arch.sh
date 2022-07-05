@@ -7,71 +7,71 @@ main() {
     check_root_permission
 
     if [ "$do_connect_wifi" = 1 ]; then
-	connect_wifi
+    connect_wifi
     fi
     if [ "$do_open_ssh" = 1 ]; then
-	open_ssh
-	exit 0
+    open_ssh
+    exit 0
     fi
 
     check_efi
 
     if [ "$do_live_env_proc" = 1 ]; then
-	live_env_proc
-	exit 0
+    live_env_proc
+    exit 0
     fi
     if [ "$do_in_chroot_proc" = 1 ]; then
-	in_chroot_proc
-	exit 0
+    in_chroot_proc
+    exit 0
     fi
 
     if [ "$do_install_pkg" = 1 ]; then
-	install_pkg
+    install_pkg
     fi
     if [ "$do_copy_config" = 1 ]; then
-	copy_config
+    copy_config
     fi
 }
 
 parse_arguments() {
     if [ "$#" -eq 0 ]; then
-	do_live_env_proc=1
+    do_live_env_proc=1
     fi
 
     while [ "$#" -gt 0 ]; do
-	case "$1" in
-	    co | config)
-		do_copy_config=1
-		;;
-	    in | install)
-		do_install_pkg=1
-		;;
-	    ss | ssh)
-		do_open_ssh=1
-		;;
-	    wi | wifi)
-		do_connect_wifi=1
-		;;
-	    --in-chroot)
-		do_in_chroot_proc=1
-		shift
-		user_name="$1"
-		shift
-		user_pass="$1"
-		shift
-		use_gui="$1"
-		;;
-	    -h | --help)
-		usage 0
-		;;
-	    --)
-		break
-		;;
-	    *)
-		usage 1
-		;;
-	esac
-	shift
+    case "$1" in
+        co | config)
+        do_copy_config=1
+        ;;
+        in | install)
+        do_install_pkg=1
+        ;;
+        ss | ssh)
+        do_open_ssh=1
+        ;;
+        wi | wifi)
+        do_connect_wifi=1
+        ;;
+        --in-chroot)
+        do_in_chroot_proc=1
+        shift
+        user_name="$1"
+        shift
+        user_pass="$1"
+        shift
+        use_gui="$1"
+        ;;
+        -h | --help)
+        usage 0
+        ;;
+        --)
+        break
+        ;;
+        *)
+        usage 1
+        ;;
+    esac
+    shift
     done
 }
 
@@ -159,17 +159,17 @@ read_only_format() {
     local matching_format="$3"
 
     while true; do
-	echo -ne "${y}read:${e} ${output_hint} "
-	read reply
-	if echo "$reply" | grep -q "$matching_format"; then
-	    echo -ne "${y}sure:${e} ${reply}, are you sure? "
-	    read sure
-	    if [ "$sure" = 'y' -o "$sure" = '' ]; then
-		break
-	    fi
-	else
-	    echo -e "${r}wrong format.${e}"
-	fi
+    echo -ne "${y}read:${e} ${output_hint} "
+    read reply
+    if echo "$reply" | grep -q "$matching_format"; then
+        echo -ne "${y}sure:${e} ${reply}, are you sure? "
+        read sure
+        if [ "$sure" = 'y' -o "$sure" = '' ]; then
+        break
+        fi
+    else
+        echo -e "${r}wrong format.${e}"
+    fi
     done
 
     eval ${var_name_to_be_set}="$reply"
@@ -177,9 +177,9 @@ read_only_format() {
 
 check_network() {
     if ping -c 1 -w 1 1.1.1.1 &> /dev/null; then
-	echo -e "${g}network connection is successful.${e}"
+    echo -e "${g}network connection is successful.${e}"
     else
-	error "Network connection failed."
+    error "Network connection failed."
     fi
 }
 
@@ -198,59 +198,59 @@ use_gui_or_not() {
     read sure
 
     case "$sure" in
-	y)
-	    use_gui=1
-	    ;;
-	n)
-	    use_gui=0
-	    ;;
-	*)
-	    if [ $(systemd-detect-virt) = "none" ]; then
-		use_gui=1
-	    else
-		use_gui=0
-	    fi
-	    ;;
+    y)
+        use_gui=1
+        ;;
+    n)
+        use_gui=0
+        ;;
+    *)
+        if [ $(systemd-detect-virt) = "none" ]; then
+        use_gui=1
+        else
+        use_gui=0
+        fi
+        ;;
     esac
 }
 
 set_partition() {
     if findmnt /mnt; then
-	umount -fR /mnt
+    umount -fR /mnt
     fi
 
     sel reply "automatic partition or manual partition" "automatic" "manual"
 
     if [ "$reply" = "automatic" ]; then
-	select_partition main_part
+    select_partition main_part
 
-	parted -s ${main_part} mklabel gpt
-	if [ "$bios_type" = "uefi" ]; then
-	    parted -s ${main_part} \
-		   mkpart esp 1m 513m \
-		   set 1 esp on \
-		   mkpart arch 513m 100%
-	else
-	    parted -s ${main_part} \
-		   mkpart grub 1m 3m \
-		   set 1 bios_grub on \
-		   mkpart arch 3m 100%
-	fi
-
-	if echo ${main_part} | grep -q 'nvme'; then
-	    boot_part="${main_part}p1"
-	    root_part="${main_part}p2"
-	else
-	    boot_part="${main_part}1"
-	    root_part="${main_part}2"
-	fi
-
-	if [ "$bios_type" = "uefi" ]; then
-	    mkfs.fat -F32 ${boot_part}
-	fi
+    parted -s ${main_part} mklabel gpt
+    if [ "$bios_type" = "uefi" ]; then
+        parted -s ${main_part} \
+           mkpart esp 1m 513m \
+           set 1 esp on \
+           mkpart arch 513m 100%
     else
-	select_partition boot_part
-	select_partition root_part
+        parted -s ${main_part} \
+           mkpart grub 1m 3m \
+           set 1 bios_grub on \
+           mkpart arch 3m 100%
+    fi
+
+    if echo ${main_part} | grep -q 'nvme'; then
+        boot_part="${main_part}p1"
+        root_part="${main_part}p2"
+    else
+        boot_part="${main_part}1"
+        root_part="${main_part}2"
+    fi
+
+    if [ "$bios_type" = "uefi" ]; then
+        mkfs.fat -F32 ${boot_part}
+    fi
+    else
+    select_partition boot_part
+    select_partition root_part
     fi
 }
 
@@ -272,13 +272,13 @@ sel() {
 
     echo -e "${y}sele:${e} ${output_hint}:"
     select option in ${option_list[@]}; do
-	if [ "$option" != "" ] && [[ "${option_list[@]}" =~ "$option"  ]]; then
-	    echo -ne "${y}sure:${e} ${option}, are you sure? "
-	    read sure
-	    if [ "$sure" = 'y' -o "$sure" = '' ]; then
-		break
-	    fi
-	fi
+    if [ "$option" != "" ] && [[ "${option_list[@]}" =~ "$option"  ]]; then
+        echo -ne "${y}sure:${e} ${option}, are you sure? "
+        read sure
+        if [ "$sure" = 'y' -o "$sure" = '' ]; then
+        break
+        fi
+    fi
     done
 
     eval ${var_name_to_be_set}=${option}
@@ -293,8 +293,8 @@ set_subvol() {
     btrfs subvolume create /mnt/@
 
     for subvol in ${subvol_list[@]}; do
-	mkdir -p /mnt/@/$(dirname $subvol)
-	btrfs subvolume create /mnt/@/${subvol}
+    mkdir -p /mnt/@/$(dirname $subvol)
+    btrfs subvolume create /mnt/@/${subvol}
     done
 
     chattr +C /mnt/@/var
@@ -310,13 +310,13 @@ set_subvol() {
     mount -o noatime,autodefrag,compress=zstd,discard=async ${root_part} /mnt
 
     for subvol in ${subvol_list[@]}; do
-	mkdir -p /mnt/${subvol}
-	mount -o subvol=/@/${subvol} ${root_part} /mnt/${subvol}
+    mkdir -p /mnt/${subvol}
+    mount -o subvol=/@/${subvol} ${root_part} /mnt/${subvol}
     done
 
     if [ "$bios_type" = 'uefi' ]; then
-	mkdir -p /mnt/boot/efi
-	mount ${boot_part} /mnt/boot/efi
+    mkdir -p /mnt/boot/efi
+    mount ${boot_part} /mnt/boot/efi
     fi
 
     # 避免回滚时 pacman 数据库和软件不同步
@@ -420,27 +420,27 @@ install_bootloader() {
     local boot_pkg=(grub grub-btrfs)
 
     if [ "$bios_type" = 'uefi' ]; then
-	boot_pkg+=(efibootmgr)
+    boot_pkg+=(efibootmgr)
     fi
 
     if [ "$use_gui" = 1 ]; then
-	boot_pkg+=(os-prober)
+    boot_pkg+=(os-prober)
     fi
 
     pacman_install ${boot_pkg[@]}
 
     case "$bios_type" in
-	uefi)
-	    grub-install --target=x86_64-efi --efi-directory=/boot/efi
-	    ;;
-	bios)
-	    if echo ${root_part} | grep -q 'nvme'; then
-		local grub_part=$(echo ${root_part} | sed 's/p[0-9]$//')
-	    else
-		local grub_part=$(echo ${root_part} | sed 's/[0-9]$//')
-	    fi
-	    grub-install --target=i386-pc ${grub_part}
-	    ;;
+    uefi)
+        grub-install --target=x86_64-efi --efi-directory=/boot/efi
+        ;;
+    bios)
+        if echo ${root_part} | grep -q 'nvme'; then
+        local grub_part=$(echo ${root_part} | sed 's/p[0-9]$//')
+        else
+        local grub_part=$(echo ${root_part} | sed 's/[0-9]$//')
+        fi
+        grub-install --target=i386-pc ${grub_part}
+        ;;
     esac
 
     # 修正 grub 查找内核
@@ -450,9 +450,9 @@ install_bootloader() {
     sed -i '/GRUB_TIMEOUT=/s/5/1/' /etc/default/grub
 
     if [ "$use_gui" = 1 ]; then
-	echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
-	# 禁用看门狗定时器
-	sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/s/"$/ nowatchdog&/' /etc/default/grub
+    echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+    # 禁用看门狗定时器
+    sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/s/"$/ nowatchdog&/' /etc/default/grub
     fi
 
     grub-mkconfig -o /boot/grub/grub.cfg
@@ -466,9 +466,9 @@ pacman_install() {
     local pkg_list=($@)
 
     for i in $(seq 3); do
-	if pacman -S --needed --noconfirm ${pkg_list[@]}; then
-	    break
-	fi
+    if pacman -S --needed --noconfirm ${pkg_list[@]}; then
+        break
+    fi
     done
 }
 
@@ -495,25 +495,25 @@ install_pkg() {
     echo -e "y\n\n" | pacman -S --needed iptables-nft
 
     if [ "$use_gui" = 1 ]; then
-	install_gui_pkg
+    install_gui_pkg
     fi
 }
 
 install_gui_pkg() {
     local cpu_vendor=$(grep vendor_id /proc/cpuinfo)
     if echo "$cpu_vendor" | grep -q 'AuthenticAMD'; then
-	local ucode_pkg="amd-ucode"
+    local ucode_pkg="amd-ucode"
     elif echo "$cpu_vendor" | grep -q 'GenuineIntel'; then
-	local ucode_pkg="intel-ucode"
+    local ucode_pkg="intel-ucode"
     fi
 
     local lspci_VGA="$(lspci | grep '3D\|VGA')"
     if echo "$lspci_VGA" | grep -q 'AMD'; then
-	local gpu_pkg="xf86-video-amdgpu"
+    local gpu_pkg="xf86-video-amdgpu"
     elif echo "$lspci_VGA" | grep -q 'Intel'; then
-	local gpu_pkg="xf86-video-intel"
+    local gpu_pkg="xf86-video-intel"
     elif echo "$lspci_VGA" | grep -q 'NVIDIA'; then
-	local gpu_pkg="xf86-video-nouveau"
+    local gpu_pkg="xf86-video-nouveau"
     fi
 
     local audio_pkg=(pipewire pipewire-alsa pipewire-pulse)
@@ -592,9 +592,9 @@ sync_cfg_dir() {
     local src_dir="${cfg_dir}/${src_in_cfg_dir}"
 
     if echo "$dest_dir" | grep -q '^/home'; then
-	rsync -a --inplace --no-whole-file ${src_dir} ${dest_dir}
+    rsync -a --inplace --no-whole-file ${src_dir} ${dest_dir}
     else
-	rsync -rlptD --inplace --no-whole-file ${src_dir} ${dest_dir}
+    rsync -rlptD --inplace --no-whole-file ${src_dir} ${dest_dir}
     fi
 }
 
@@ -608,21 +608,21 @@ write_config() {
     set_tldr
 
     if [ "$use_gui" = 1 ]; then
-	set_bluetooth
-	set_light
-	set_sddm
-	set_virtualizer
-	set_wallpaper
+    set_bluetooth
+    set_light
+    set_sddm
+    set_virtualizer
+    set_wallpaper
     fi
 }
 
 set_cron() {
     if [ "$use_gui" = 1 ]; then
-	sed '/[^@]reboot/s/^/#/' ${cfg_dir}/cron > /tmp/cron
-	fcrontab /tmp/cron
-	rm /tmp/cron
+    sed '/[^@]reboot/s/^/#/' ${cfg_dir}/cron > /tmp/cron
+    fcrontab /tmp/cron
+    rm /tmp/cron
     else
-	fcrontab ${cfg_dir}/cron
+    fcrontab ${cfg_dir}/cron
     fi
 }
 
@@ -724,11 +724,11 @@ set_auto_start() {
     local enable_list=(${btrfs_scrub} chronyd dnscrypt-proxy fcron grub-btrfs.path nftables paccache.timer pkgstats.timer sshd)
 
     if [ "$use_gui" = 1 ]; then
-	# dhcpcd 和 NetworkManager 不能同时启动
-	disable_list+=(dhcpcd)
-	enable_list+=(bluetooth libvirtd NetworkManager reflector.timer sddm tlp)
+    # dhcpcd 和 NetworkManager 不能同时启动
+    disable_list+=(dhcpcd)
+    enable_list+=(bluetooth libvirtd NetworkManager reflector.timer sddm tlp)
     else
-	enable_list+=(dhcpcd)
+    enable_list+=(dhcpcd)
     fi
 
     systemctl mask    ${mask_list[@]}
@@ -744,15 +744,15 @@ fix_mnt_point() {
 
 check_efi() {
     if [ -d /sys/firmware/efi ]; then
-	bios_type="uefi"
+    bios_type="uefi"
     else
-	bios_type="bios"
+    bios_type="bios"
     fi
 }
 
 check_root_permission() {
     if [ "$USER" != "root" ]; then
-	error "no permission"
+    error "no permission"
     fi
 }
 
