@@ -54,12 +54,10 @@ parse_arguments() {
                 ;;
             --in-chroot)
                 do_in_chroot_proc=1
-                shift
-                user_name="$1"
-                shift
-                user_pass="$1"
-                shift
-                use_gui="$1"
+                user_name="$2"
+                user_pass="$3"
+                use_gui="$4"
+                shift 3
                 ;;
             -h | --help)
                 usage 0
@@ -198,10 +196,10 @@ use_gui_or_not() {
     read sure
 
     case "$sure" in
-        y)
+        y*)
             use_gui=1
             ;;
-        n)
+        n*)
             use_gui=0
             ;;
         *)
@@ -567,7 +565,7 @@ do_as_user() {
 
 set_cfg_repo() {
 
-    # uz 是存放我所有设定的仓库
+    # 存放设定的仓库
 
     cfg_dir="${user_home}/dotfiles"
     cfg_url="https://gitlab.com/glek/dotfiles.git"
