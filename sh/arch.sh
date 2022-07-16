@@ -471,7 +471,7 @@ pacman_install() {
 }
 
 install_pkg() {
-    local network_pkg=(aria2 curl git lazygit go-ipfs openssh wireguard-tools)
+    local network_pkg=(aria2 curl git lazygit openssh wireguard-tools)
     local terminal_pkg=(emacs-nox starship tmux zoxide zsh)
     local file_pkg=(ranger p7zip snapper snap-pac)
     local sync_pkg=(chrony rsync)
@@ -482,12 +482,14 @@ install_pkg() {
     local security_pkg=(dnscrypt-proxy gocryptfs nftables)
     local depend_pkg=(perl-file-mimeinfo qrencode)
     local aur_pkg=(paru)
+    local language_pkg=(bash-language-server python-lsp-server)
 
     pacman_install ${network_pkg[@]}  ${terminal_pkg[@]}
     pacman_install ${file_pkg[@]}     ${sync_pkg[@]}
     pacman_install ${search_pkg[@]}   ${new_search_pkg[@]}
     pacman_install ${system_pkg[@]}   ${maintain_pkg[@]}
-    pacman_install ${security_pkg[@]} ${depend_pkg[@]} ${aur_pkg[@]}
+    pacman_install ${security_pkg[@]} ${depend_pkg[@]}
+    pacman_install ${aur_pkg[@]}      ${language_pkg[@]}
 
     # iptables-nft 不能直接装，需要进行确认
     echo -e "y\n\n" | pacman -S --needed iptables-nft
@@ -590,15 +592,15 @@ sync_cfg_dir() {
     local src_dir="${cfg_dir}/${src_in_cfg_dir}"
 
     if echo "$dest_dir" | grep -q '^/home'; then
-        rsync -a --inplace --no-whole-file ${src_dir} ${dest_dir}
+        local option="-a"
     else
-        rsync -rlptD --inplace --no-whole-file ${src_dir} ${dest_dir}
+        local option="-rlptD"
     fi
+    rsync ${option} --inplace --no-whole-file "$src_dir" "$dest_dir"
 }
 
 write_config() {
     set_cron
-    set_ipfs
     set_shell
     set_snapper
     set_ssh
@@ -622,11 +624,6 @@ set_cron() {
     else
         fcrontab ${cfg_dir}/cron
     fi
-}
-
-set_ipfs() {
-    do_as_user ipfs init
-    systemctl enable ipfs@${user_name}
 }
 
 set_shell() {
@@ -711,8 +708,8 @@ set_wallpaper() {
     local wallpaper_dir='a/pixra/bimple'
     local wallpaper_name='86094212_p0.png'
 
-    do_as_user mkdir -p ${user_home}/${wallpaper_dir}
-    sync_cfg_dir 86094212_p0.png ${user_home}/${wallpaper_dir}/${wallpaper_name}
+    do_as_user mkdir -p ${user_home}/"$wallpaper_dir"
+    sync_cfg_dir "$wallpaper_name" ${user_home}/"$wallpaper_dir"/"$wallpaper_name"
 }
 
 set_auto_start() {
